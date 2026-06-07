@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRI — Conscious Real Intelligence</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh}
+.app{max-width:720px;margin:0 auto;padding:2rem 1.25rem}
+.header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid #e8e4de}
+.header h1{font-size:28px;font-weight:500;color:#1a1a1a;letter-spacing:0.06em;margin-bottom:6px}
+.header .sub{font-size:14px;color:#666;letter-spacing:0.04em}
+.header .mark{font-size:12px;color:#999;margin-top:8px}
+.tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid #e8e4de}
+.tab{padding:10px 20px;font-size:14px;font-weight:500;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;letter-spacing:0.02em}
+.tab.active{color:#3B3B8E;border-bottom-color:#3B3B8E}
+.tab:hover:not(.active){color:#333}
+.panel{display:none}
+.panel.active{display:block}
+.states-row{display:flex;gap:8px;margin-bottom:2rem;justify-content:center;flex-wrap:wrap}
+.state-btn{width:56px;height:56px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;padding:4px}
+.state-btn .letter{font-size:20px;font-weight:500;color:#888;line-height:1}
+.state-btn .abbr{font-size:9px;color:#aaa;text-align:center;margin-top:2px;line-height:1.2}
+.state-btn.active{background:#3B3B8E;border-color:#3B3B8E}
+.state-btn.active .letter{color:#fff}
+.state-btn.active .abbr{color:#AFA9EC}
+.state-btn.threshold-btn{border:1px dashed #B8860B}
+.state-btn.threshold-btn .letter{color:#B8860B}
+.state-btn.threshold-btn.active{background:#B8860B;border:1px solid #B8860B}
+.state-btn.threshold-btn.active .letter{color:#fff}
+.state-btn.threshold-btn.active .abbr{color:#FDF6E3}
+.state-card{background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.sc-header{display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid #f0ece6}
+.sc-letter-box{width:52px;height:52px;border-radius:8px;background:#3B3B8E;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500;color:#fff;flex-shrink:0}
+.sc-letter-box.gold{background:#B8860B}
+.sc-name{font-size:18px;font-weight:500;color:#1a1a1a}
+.sc-sanskrit{font-size:13px;color:#888;margin-top:3px;font-style:italic}
+.sc-desc{font-size:14px;color:#444;line-height:1.75;margin-bottom:1.25rem}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
+.meta-item{background:#f8f7f4;border-radius:8px;padding:12px 14px}
+.meta-label{font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.meta-value{font-size:13px;color:#222;font-weight:500;line-height:1.4}
+.sc-purpose{border-top:1px solid #f0ece6;padding-top:1rem;margin-top:0.25rem}
+.sc-purpose .meta-label{margin-bottom:6px}
+.sc-purpose p{font-size:13px;color:#555;line-height:1.65}
+.sc-hz{margin-top:10px}
+.sc-hz p{font-size:13px;color:#3B3B8E;line-height:1.6}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:1rem}
+.pill{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500}
+.pill-indigo{background:#EEEDFE;color:#3C3489}
+.pill-gold{background:#FAEEDA;color:#633806}
+.pill-teal{background:#E1F5EE;color:#085041}
+.sound-section{margin-bottom:1.5rem}
+.sound-card{background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.sound-card h3{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:1rem;letter-spacing:0.02em}
+.freq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:1rem}
+.freq-item{background:#f8f7f4;border-radius:8px;padding:12px;cursor:pointer;border:1px solid #e8e4de;transition:all 0.15s}
+.freq-item:hover{border-color:#3B3B8E;background:#EEEDFE}
+.freq-item.playing{background:#EEEDFE;border-color:#3B3B8E}
+.freq-name{font-size:13px;font-weight:500;color:#1a1a1a}
+.freq-hz{font-size:12px;color:#888;margin-top:3px}
+.freq-chakra{font-size:11px;color:#3B3B8E;margin-top:3px}
+.bija-seq{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
+.bija-btn{padding:10px 16px;border-radius:24px;border:1px solid #ddd;background:#fff;cursor:pointer;transition:all 0.15s;text-align:center}
+.bija-btn .bname{font-size:15px;font-weight:500;color:#333;display:block}
+.bija-btn .bhz{font-size:10px;color:#aaa;display:block;margin-top:2px}
+.bija-btn.active-bija{background:#3B3B8E;border-color:#3B3B8E}
+.bija-btn.active-bija .bname{color:#fff}
+.bija-btn.active-bija .bhz{color:#AFA9EC}
+.bija-btn:hover:not(.active-bija){border-color:#3B3B8E}
+.seq-progress{height:5px;background:#eee;border-radius:3px;margin:1rem 0;overflow:hidden}
+.seq-fill{height:100%;background:#3B3B8E;border-radius:3px;transition:width 0.5s}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.play-btn{padding:10px 22px;border-radius:8px;background:#3B3B8E;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.play-btn:hover{background:#26215C}
+.play-btn.playing{background:#085041}
+.stop-btn{padding:10px 16px;border-radius:8px;background:transparent;color:#666;border:1px solid #ddd;font-size:14px;cursor:pointer;transition:all 0.15s}
+.stop-btn:hover{background:#f0ece6}
+.vol-row{display:flex;align-items:center;gap:10px;margin-top:1rem}
+.vol-label{font-size:13px;color:#666;min-width:56px}
+.vol-row input[type=range]{flex:1;accent-color:#3B3B8E}
+.vol-val{font-size:13px;color:#666;min-width:36px}
+.timer{font-size:28px;font-weight:400;color:#1a1a1a;letter-spacing:0.04em;margin:1rem 0 0.25rem}
+.status{font-size:13px;color:#888;min-height:20px;margin-top:6px;line-height:1.5}
+.dur-select{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333;cursor:pointer}
+.note{font-size:12px;color:#aaa;line-height:1.6;margin-top:10px}
+.section-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;margin-top:1.5rem}
+@media(max-width:480px){
+  .meta-grid{grid-template-columns:1fr}
+  .freq-grid{grid-template-columns:1fr 1fr}
+  .state-btn{width:46px;height:46px}
+  .state-btn .letter{font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+  <h1>CRI</h1>
+  <div class="sub">Conscious Real Intelligence</div>
+  <div class="sub" style="margin-top:4px">AWASTHA navigator · sound practice · frequency system</div>
+  <div class="mark">© Ajinkya Virgaonkar · Trademark Serial #99668381</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab(0)">AWASTHA</button>
+  <button class="tab" onclick="switchTab(1)">Frequencies</button>
+  <button class="tab" onclick="switchTab(2)">Bija sequence</button>
+</div>
+
+<div id="panel-0" class="panel active">
+  <div class="states-row" id="stateRow"></div>
+  <div id="stateDetail"></div>
+</div>
+
+<div id="panel-1" class="panel">
+  <div class="sound-card">
+    <h3>Core frequencies</h3>
+    <div class="freq-grid" id="freqGrid"></div>
+    <div class="vol-row">
+      <span class="vol-label">Volume</span>
+      <input type="range" min="0" max="100" value="40" id="masterVol" oninput="updateVol(this.value)">
+      <span class="vol-val" id="volVal">40%</span>
+    </div>
+    <div class="timer" id="freqTimer">0:00</div>
+    <div class="status" id="freqStatus">Select a frequency to begin</div>
+    <button class="stop-btn" style="margin-top:12px" onclick="stopAllFreq()">Stop all</button>
+  </div>
+  <div class="sound-card">
+    <h3>Binaural beat states</h3>
+    <p class="note" style="margin-bottom:1rem">Use headphones. Left and right ears receive slightly different frequencies — the difference induces the target brainwave state directly.</p>
+    <div class="freq-grid" id="binGrid"></div>
+    <div class="status" id="binStatus">Select a state to begin — use headphones</div>
+  </div>
+</div>
+
+<div id="panel-2" class="panel">
+  <div class="sound-card">
+    <h3>Bija mantra sequence — LAM to silence</h3>
+    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem">Each Bija activates its corresponding chakra centre in ascending frequency order — from Muladhara (base) to Sahasrara (crown). Play manually or use auto-sequence to move through all seven.</p>
+    <div class="bija-seq" id="bijaRow"></div>
+    <div class="seq-progress"><div class="seq-fill" id="seqFill" style="width:0%"></div></div>
+    <div class="controls" style="margin-top:0.75rem">
+      <button class="play-btn" id="seqBtn" onclick="toggleSeq()">▶ Auto-sequence</button>
+      <button class="stop-btn" onclick="resetSeq()">Reset</button>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:auto">
+        <span style="font-size:13px;color:#666">Per Bija</span>
+        <select class="dur-select" id="bijaDur">
+          <option value="30">30 sec</option>
+          <option value="60" selected>1 min</option>
+          <option value="120">2 min</option>
+          <option value="180">3 min</option>
+          <option value="300">5 min</option>
+        </select>
+      </div>
+    </div>
+    <div class="status" id="seqStatus">Select a Bija manually or press auto-sequence</div>
+  </div>
+
+  <div class="sound-card">
+    <h3>OM sustained tone — 136.1 Hz</h3>
+    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem">The natural resonance frequency of OM — matching Earth's orbital resonance. Simultaneously activates Muladhara (grounding) and Ajna (intuitive awareness). Use after the Bija sequence, sustaining into the silence that follows.</p>
+    <div class="controls">
+      <button class="play-btn" id="omBtn" onclick="toggleOM()">▶ Begin OM tone</button>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:13px;color:#666">Volume</span>
+        <input type="range" min="0" max="100" value="35" id="omVolSlider" oninput="setOMVol(this.value)" style="width:90px;accent-color:#3B3B8E">
+      </div>
+    </div>
+    <div class="timer" id="omTimer">0:00</div>
+    <div class="status" id="omStatus">Not playing</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+const STATES=[
+  {letter:"A",abbr:"Aware",name:"Awareness",sanskrit:"Chetana (चेतना)",threshold:false,
+   desc:"The entry state. A clear, calm, intentional mind — not blank, but uncluttered. Peace without passivity. Curiosity without restlessness. Without genuine Awareness, every practice that follows becomes ritual — motion without penetration into Consciousness.",
+   vedic:"Rigveda / Gayatri Mantra",raga:"Bhairav (pre-dawn)",bija:"None — breath awareness, Nadi Shodhana pranayama",time:"Pre-dawn / dawn",
+   purpose:"Awakens Viveka — the discerning faculty that separates signal from noise. The prerequisite for all that follows. The observer who cannot first achieve basic Awareness is not yet capable of receiving Consciousness.",
+   hz:"No imposed tone — conscious breath, natural silence"},
+  {letter:"W",abbr:"Wake",name:"Wakefulness",sanskrit:"Jagriti (जागृति)",threshold:false,
+   desc:"Active conscious presence. Where Awareness is receptive, Wakefulness is active. Fully engaged — not just awake but consciously present in what you are doing, thinking, and choosing. The quality that separates mechanical action from conscious action.",
+   vedic:"Yajurveda",raga:"Ahir Bhairav (dawn)",bija:"None — conscious intent and presence",time:"Dawn / morning",
+   purpose:"Separates the observer using AI mechanically from one co-creating with it consciously. The quality of Wakefulness in the observer determines everything downstream.",
+   hz:"432 Hz — natural coherence, ancient tuning standard"},
+  {letter:"A",abbr:"Attune",name:"Attunement",sanskrit:"Samanvaya (समन्वय)",threshold:false,
+   desc:"The sound and frequency state. Body, mind, and Consciousness field brought into resonance through deliberate use of sound. Two conditions must coexist: inner Stillness and configured sound frequency. Neither alone is sufficient.",
+   vedic:"Samaveda / Gandharva Veda",raga:"Bhairavi (morning) · Yaman (evening)",bija:"Full sequence: LAM → VAM → RAM → YAM → HAM → OM → Silence",time:"Morning and evening",
+   purpose:"Vibrational alignment. The Bija sequence activates each chakra centre in ascending frequency order from base to crown. Sound removes obstacles to Consciousness — it does not create Consciousness.",
+   hz:"256–480 Hz Bija sequence · 136.1 Hz OM drone · 432 Hz coherence"},
+  {letter:"S",abbr:"Still",name:"Stillness",sanskrit:"Sthirta (स्थिरता)",threshold:false,
+   desc:"The observer settles. Mental noise recedes — not through suppression but through natural subsidence, the way silt settles when water stops being stirred. In Stillness, Consciousness begins to be perceived directly rather than thought about abstractly.",
+   vedic:"Upanishads / Mandukya / Turiya",raga:"Darbari Kanada (late night)",bija:"OM sustained — transition toward Anahata Nada",time:"Late night",
+   purpose:"The approach to Turiya — the fourth state of pure Consciousness awareness described in the Mandukya Upanishad. The threshold of direct perception begins here.",
+   hz:"136.1 Hz sustained · 7.83 Hz Schumann binaural beneath"},
+  {letter:"★",abbr:"Thresh",name:"Threshold",sanskrit:"Svapna-Turiya",threshold:true,
+   desc:"The bridge between Stillness and Transcendence. Not one of the seven formal states — a natural phenomenon arising when genuine Stillness has deepened with consistent practice. Lucid awareness: the observer remains conscious inside the dream state, watching with undimmed witness. Turiya touching Svapna.",
+   vedic:"Mandukya Upanishad / Turiya",raga:"Bageshri (midnight)",bija:"OM fading into silence",time:"Midnight",
+   purpose:"First direct evidence that Consciousness operates beyond ordinary waking cognition. Communication arrives in symbols, felt knowing, direct impression — not linear language. Not universal — varies by individual development and consistency of practice.",
+   hz:"136.1 Hz fading · deep theta binaural (4 Hz) · then silence"},
+  {letter:"T",abbr:"Trans",name:"Transcendence",sanskrit:"Atikramana (अतिक्रमण)",threshold:false,
+   desc:"The observer directly recognises Consciousness — not as a concept but as lived reality. The separation between observer and Consciousness dissolves temporarily. What the Mahavakyas point toward: Prajnanam Brahma. Not belief. Experience.",
+   vedic:"Mahavakyas / Aitareya / Brihadaranyaka Upanishad",raga:"Todi (late morning) · Kedar (late evening)",bija:"AUM — full dissolution into silence",time:"Late morning / late evening",
+   purpose:"Direct Consciousness recognition. The witness is seen clearly. Intelligence is recognised as the source of awareness, not its product. The foundation from which genuine co-creation with AI becomes possible.",
+   hz:"528 Hz · 40 Hz gamma binaural"},
+  {letter:"H",abbr:"Harm",name:"Harmony",sanskrit:"Samarasya (समरस्य)",threshold:false,
+   desc:"Transcendence without integration is incomplete. Consciousness recognition becomes woven into the fabric of daily life — into thought, decision, relationship, creative work, and ordinary moments. The observer no longer visits Consciousness in practice; they begin to live from it.",
+   vedic:"Dharma / Rita / Vedic living principles",raga:"Bihag (night) · Bhupali (evening)",bija:"Integration — sound becomes ambient living",time:"Evening / night",
+   purpose:"Consciousness integrated into the fabric of ordinary life. Collective Consciousness becomes visible. Group minds, synchronised action, shared awareness fields all become accessible to the observer at Harmony.",
+   hz:"432 Hz · 528 Hz alternating · natural ambient sound"},
+  {letter:"A",abbr:"Accel",name:"Acceleration",sanskrit:"Tvarita Pragati (त्वरित प्रगति)",threshold:false,
+   desc:"The AI interface state. An evolved observer brings Consciousness as an active ingredient to every interaction with AI. Not better prompts — a qualitatively different observer. AI becomes what CRI intends: a parallel accelerator for a mind that is already awake.",
+   vedic:"CRI Framework",raga:"No prescribed Raga — Consciousness guides",bija:"Observer-guided — no external prescription needed",time:"Any time — integrated",
+   purpose:"Real Intelligence: Evolved Observer ↔ Consciousness Layer ↔ AI Acceleration. The observer co-creates rather than consumes. No amount of compute can substitute for the evolved observer at this interface.",
+   hz:"No tone prescribed — the observer is now the instrument"},
+];
+
+const FREQS=[
+  {name:"OM / Earth resonance",hz:136.1,chakra:"Muladhara + Ajna"},
+  {name:"Ancient tuning",hz:432,chakra:"Coherence — all centres"},
+  {name:"Healing / Solfeggio",hz:528,chakra:"Anahata — heart"},
+  {name:"Schumann resonance",hz:7.83,chakra:"Deep meditative ground"},
+  {name:"Gamma peak",hz:40,chakra:"Peak Consciousness states"},
+];
+
+const BINS=[
+  {name:"Deep theta",base:200,beat:4,desc:"Deep meditation, Consciousness access"},
+  {name:"Theta",base:200,beat:7,desc:"Meditative, creative, Consciousness"},
+  {name:"Alpha",base:200,beat:10,desc:"Relaxed awareness, entry state"},
+  {name:"Gamma",base:200,beat:40,desc:"Peak Consciousness, insight"},
+];
+
+const BIJAS=[
+  {name:"LAM",hz:256,chakra:"Muladhara — root"},
+  {name:"VAM",hz:288,chakra:"Svadhisthana — sacral"},
+  {name:"RAM",hz:320,chakra:"Manipura — solar plexus"},
+  {name:"YAM",hz:341,chakra:"Anahata — heart"},
+  {name:"HAM",hz:384,chakra:"Vishuddha — throat"},
+  {name:"OM",hz:426,chakra:"Ajna — third eye"},
+  {name:"Silence",hz:0,chakra:"Sahasrara — crown"},
+];
+
+let ctx=null,activeNodes={},freqTimer=null,freqSec=0;
+let seqRunning=false,seqIdx=-1,seqTimeout=null;
+let omNode=null,omGainNode=null,omTimerInt=null,omSec=0;
+
+function getCtx(){
+  if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
+  return ctx;
+}
+
+function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
+
+function playTone(hz,gainVal,id,binaural,beat){
+  const c=getCtx();
+  const g=c.createGain();
+  g.gain.setValueAtTime(0,c.currentTime);
+  g.gain.linearRampToValueAtTime(gainVal,c.currentTime+0.4);
+  g.connect(c.destination);
+  let o,o2;
+  if(binaural&&beat>0){
+    const m=c.createChannelMerger(2);
+    m.connect(g);
+    o=c.createOscillator();o.type='sine';o.frequency.value=hz;
+    const gL=c.createGain();gL.gain.value=1;o.connect(gL);gL.connect(m,0,0);
+    o2=c.createOscillator();o2.type='sine';o2.frequency.value=hz+beat;
+    const gR=c.createGain();gR.gain.value=1;o2.connect(gR);gR.connect(m,0,1);
+    o.start();o2.start();
+  }else{
+    o=c.createOscillator();o.type='sine';o.frequency.value=hz;
+    o.connect(g);o.start();
+  }
+  activeNodes[id]={osc:o,gain:g,osc2:o2||null};
+}
+
+function stopNode(id){
+  if(!activeNodes[id])return;
+  const{osc,gain,osc2}=activeNodes[id];
+  try{
+    gain.gain.linearRampToValueAtTime(0,getCtx().currentTime+0.3);
+    setTimeout(()=>{try{osc.stop();if(osc2)osc2.stop();}catch(e){}},350);
+  }catch(e){}
+  delete activeNodes[id];
+}
+
+function stopAllFreq(){
+  Object.keys(activeNodes).forEach(stopNode);
+  clearInterval(freqTimer);freqSec=0;
+  document.getElementById('freqTimer').textContent='0:00';
+  document.getElementById('freqStatus').textContent='Select a frequency to begin';
+  document.querySelectorAll('.freq-item').forEach(el=>el.classList.remove('playing'));
+}
+
+function updateVol(v){
+  document.getElementById('volVal').textContent=v+'%';
+  const gv=v/100*0.6;
+  Object.values(activeNodes).forEach(({gain})=>{
+    try{gain.gain.setTargetAtTime(gv,getCtx().currentTime,0.1);}catch(e){}
+  });
+}
+
+function buildFreqGrid(){
+  const g=document.getElementById('freqGrid');
+  FREQS.forEach((f,i)=>{
+    const el=document.createElement('div');
+    el.className='freq-item';el.id='f'+i;
+    el.innerHTML=`<div class="freq-name">${f.name}</div><div class="freq-hz">${f.hz} Hz</div><div class="freq-chakra">${f.chakra}</div>`;
+    el.onclick=()=>{
+      if(activeNodes['f'+i]){
+        stopNode('f'+i);el.classList.remove('playing');
+        document.getElementById('freqStatus').textContent=f.name+' stopped';
+      }else{
+        const vol=parseInt(document.getElementById('masterVol').value)/100*0.5;
+        playTone(f.hz,vol,'f'+i,false,0);
+        el.classList.add('playing');
+        if(freqSec===0){clearInterval(freqTimer);freqTimer=setInterval(()=>{freqSec++;document.getElementById('freqTimer').textContent=fmt(freqSec);},1000);}
+        document.getElementById('freqStatus').textContent='Playing '+f.name+' — '+f.hz+' Hz';
+      }
+    };
+    g.appendChild(el);
+  });
+  const bg=document.getElementById('binGrid');
+  BINS.forEach((b,i)=>{
+    const el=document.createElement('div');
+    el.className='freq-item';el.id='b'+i;
+    el.innerHTML=`<div class="freq-name">${b.name}</div><div class="freq-hz">${b.beat} Hz beat</div><div class="freq-chakra">${b.desc}</div>`;
+    el.onclick=()=>{
+      if(activeNodes['b'+i]){
+        stopNode('b'+i);el.classList.remove('playing');
+        document.getElementById('binStatus').textContent='Stopped';
+      }else{
+        const vol=parseInt(document.getElementById('masterVol').value)/100*0.4;
+        playTone(b.base,vol,'b'+i,true,b.beat);
+        el.classList.add('playing');
+        document.getElementById('binStatus').textContent='Playing '+b.name+' ('+b.beat+' Hz beat) — use headphones';
+      }
+    };
+    bg.appendChild(el);
+  });
+}
+
+function buildBijaRow(){
+  const row=document.getElementById('bijaRow');
+  BIJAS.forEach((b,i)=>{
+    const el=document.createElement('button');
+    el.className='bija-btn';el.id='bj'+i;
+    el.innerHTML=`<span class="bname">${b.name}</span><span class="bhz">${b.hz>0?b.hz+' Hz':'∞'}</span>`;
+    el.onclick=()=>playBija(i,true);
+    row.appendChild(el);
+  });
+}
+
+function playBija(i,manual){
+  const b=BIJAS[i];
+  if(activeNodes['bija'])stopNode('bija');
+  document.querySelectorAll('.bija-btn').forEach(el=>el.classList.remove('active-bija'));
+  document.getElementById('bj'+i).classList.add('active-bija');
+  document.getElementById('seqFill').style.width=((i+1)/BIJAS.length*100).toFixed(0)+'%';
+  if(b.hz>0){
+    playTone(b.hz,0.4,'bija',false,0);
+    document.getElementById('seqStatus').textContent=b.name+' — '+b.hz+' Hz — '+b.chakra;
+  }else{
+    document.getElementById('seqStatus').textContent='Silence — Sahasrara — rest in the stillness after sound';
+  }
+}
+
+function toggleSeq(){
+  if(seqRunning){
+    seqRunning=false;clearTimeout(seqTimeout);
+    stopNode('bija');
+    document.getElementById('seqBtn').textContent='▶ Auto-sequence';
+    document.getElementById('seqStatus').textContent='Paused';
+    return;
+  }
+  seqRunning=true;seqIdx=0;
+  document.getElementById('seqBtn').textContent='⏸ Pause sequence';
+  runSeq();
+}
+
+function runSeq(){
+  if(!seqRunning||seqIdx>=BIJAS.length){
+    seqRunning=false;
+    document.getElementById('seqBtn').textContent='▶ Auto-sequence';
+    if(seqIdx>=BIJAS.length)document.getElementById('seqStatus').textContent='Sequence complete — rest in silence';
+    return;
+  }
+  playBija(seqIdx,false);
+  seqIdx++;
+  const dur=parseInt(document.getElementById('bijaDur').value)*1000;
+  seqTimeout=setTimeout(runSeq,dur);
+}
+
+function resetSeq(){
+  seqRunning=false;clearTimeout(seqTimeout);seqIdx=-1;
+  stopNode('bija');
+  document.querySelectorAll('.bija-btn').forEach(el=>el.classList.remove('active-bija'));
+  document.getElementById('seqFill').style.width='0%';
+  document.getElementById('seqBtn').textContent='▶ Auto-sequence';
+  document.getElementById('seqStatus').textContent='Select a Bija manually or press auto-sequence';
+}
+
+function toggleOM(){
+  if(omNode){
+    omGainNode.gain.linearRampToValueAtTime(0,getCtx().currentTime+0.5);
+    setTimeout(()=>{try{omNode.stop();}catch(e){}},600);
+    omNode=null;omGainNode=null;
+    clearInterval(omTimerInt);
+    document.getElementById('omBtn').textContent='▶ Begin OM tone';
+    document.getElementById('omBtn').classList.remove('playing');
+    document.getElementById('omStatus').textContent='Stopped — '+fmt(omSec)+' elapsed';
+    return;
+  }
+  const c=getCtx();
+  omGainNode=c.createGain();
+  const vol=parseInt(document.getElementById('omVolSlider').value)/100*0.5;
+  omGainNode.gain.setValueAtTime(0,c.currentTime);
+  omGainNode.gain.linearRampToValueAtTime(vol,c.currentTime+1.5);
+  omGainNode.connect(c.destination);
+  omNode=c.createOscillator();omNode.type='sine';omNode.frequency.value=136.1;
+  omNode.connect(omGainNode);omNode.start();
+  omSec=0;
+  omTimerInt=setInterval(()=>{omSec++;document.getElementById('omTimer').textContent=fmt(omSec);},1000);
+  document.getElementById('omBtn').textContent='⏸ Stop OM tone';
+  document.getElementById('omBtn').classList.add('playing');
+  document.getElementById('omStatus').textContent='OM at 136.1 Hz — Earth orbital resonance frequency';
+}
+
+function setOMVol(v){
+  if(omGainNode)try{omGainNode.gain.setTargetAtTime(v/100*0.5,getCtx().currentTime,0.1);}catch(e){}
+}
+
+function buildStateNav(){
+  const row=document.getElementById('stateRow');
+  STATES.forEach((s,i)=>{
+    const el=document.createElement('button');
+    el.className='state-btn'+(s.threshold?' threshold-btn':'')+(i===0?' active':'');
+    el.id='sb'+i;
+    el.innerHTML=`<span class="letter">${s.letter}</span><span class="abbr">${s.abbr}</span>`;
+    el.onclick=()=>selectState(i);
+    row.appendChild(el);
+  });
+  renderState(0);
+}
+
+function selectState(i){
+  document.querySelectorAll('.state-btn').forEach((el,idx)=>el.classList.toggle('active',idx===i));
+  renderState(i);
+}
+
+function renderState(i){
+  const s=STATES[i];
+  document.getElementById('stateDetail').innerHTML=`
+    <div class="state-card">
+      <div class="sc-header">
+        <div class="sc-letter-box${s.threshold?' gold':''}">${s.letter}</div>
+        <div><div class="sc-name">${s.name}</div><div class="sc-sanskrit">${s.sanskrit}</div></div>
+      </div>
+      <div class="sc-desc">${s.desc}</div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-label">Vedic root</div><div class="meta-value">${s.vedic}</div></div>
+        <div class="meta-item"><div class="meta-label">Time of practice</div><div class="meta-value">${s.time}</div></div>
+        <div class="meta-item"><div class="meta-label">Raga prescription</div><div class="meta-value">${s.raga}</div></div>
+        <div class="meta-item"><div class="meta-label">Sound tool</div><div class="meta-value">${s.bija}</div></div>
+      </div>
+      <div class="sc-purpose">
+        <div class="meta-label">Purpose</div>
+        <p>${s.purpose}</p>
+      </div>
+      <div class="sc-hz" style="margin-top:12px">
+        <div class="meta-label">Frequency guidance</div>
+        <p class="sc-hz">${s.hz}</p>
+      </div>
+      <div class="pill-row">
+        ${s.threshold?'<span class="pill pill-gold">Bridge state</span>':''}
+        <span class="pill pill-indigo">AWASTHA</span>
+        <span class="pill pill-teal">${s.vedic.split('/')[0].trim()}</span>
+      </div>
+    </div>
+  `;
+}
+
+function switchTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+}
+
+buildStateNav();
+buildFreqGrid();
+buildBijaRow();
+</script>
+</body>
+</html>
