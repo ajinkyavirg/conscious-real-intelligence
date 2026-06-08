@@ -4,93 +4,126 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CRI — Conscious Real Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8f7f4;color:#1a1a1a;min-height:100vh}
-.app{max-width:720px;margin:0 auto;padding:2rem 1.25rem}
-.header{text-align:center;margin-bottom:2.5rem;padding-bottom:2rem;border-bottom:1px solid #e8e4de}
-.header h1{font-size:28px;font-weight:500;color:#1a1a1a;letter-spacing:0.06em;margin-bottom:6px}
-.header .sub{font-size:14px;color:#666;letter-spacing:0.04em}
-.header .mark{font-size:12px;color:#999;margin-top:8px}
-.tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid #e8e4de}
-.tab{padding:10px 20px;font-size:14px;font-weight:500;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;letter-spacing:0.02em}
+.app{max-width:780px;margin:0 auto;padding:2rem 1.25rem}
+.header{text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid #e8e4de}
+.header h1{font-size:26px;font-weight:500;color:#1a1a1a;letter-spacing:0.06em;margin-bottom:4px}
+.header .sub{font-size:13px;color:#888;letter-spacing:0.03em}
+.header .mark{font-size:11px;color:#bbb;margin-top:6px}
+.tabs{display:flex;gap:0;margin-bottom:2rem;border-bottom:1px solid #e8e4de;overflow-x:auto}
+.tab{padding:10px 16px;font-size:13px;font-weight:500;color:#888;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;white-space:nowrap;flex-shrink:0}
 .tab.active{color:#3B3B8E;border-bottom-color:#3B3B8E}
 .tab:hover:not(.active){color:#333}
 .panel{display:none}
 .panel.active{display:block}
-.states-row{display:flex;gap:8px;margin-bottom:2rem;justify-content:center;flex-wrap:wrap}
-.state-btn{width:56px;height:56px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;padding:4px}
-.state-btn .letter{font-size:20px;font-weight:500;color:#888;line-height:1}
-.state-btn .abbr{font-size:9px;color:#aaa;text-align:center;margin-top:2px;line-height:1.2}
+
+/* AWASTHA */
+.states-row{display:flex;gap:7px;margin-bottom:1.5rem;justify-content:center;flex-wrap:wrap}
+.state-btn{width:54px;height:54px;border-radius:8px;border:1px solid #ddd;background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:all 0.15s;padding:4px}
+.state-btn .letter{font-size:19px;font-weight:500;color:#888;line-height:1}
+.state-btn .abbr{font-size:9px;color:#bbb;text-align:center;margin-top:2px}
 .state-btn.active{background:#3B3B8E;border-color:#3B3B8E}
-.state-btn.active .letter{color:#fff}
-.state-btn.active .abbr{color:#AFA9EC}
+.state-btn.active .letter,.state-btn.active .abbr{color:#fff}
 .state-btn.threshold-btn{border:1px dashed #B8860B}
 .state-btn.threshold-btn .letter{color:#B8860B}
 .state-btn.threshold-btn.active{background:#B8860B;border:1px solid #B8860B}
-.state-btn.threshold-btn.active .letter{color:#fff}
-.state-btn.threshold-btn.active .abbr{color:#FDF6E3}
 .state-card{background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
 .sc-header{display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid #f0ece6}
-.sc-letter-box{width:52px;height:52px;border-radius:8px;background:#3B3B8E;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:500;color:#fff;flex-shrink:0}
-.sc-letter-box.gold{background:#B8860B}
-.sc-name{font-size:18px;font-weight:500;color:#1a1a1a}
+.sc-lb{width:50px;height:50px;border-radius:8px;background:#3B3B8E;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:#fff;flex-shrink:0}
+.sc-lb.gold{background:#B8860B}
+.sc-name{font-size:17px;font-weight:500;color:#1a1a1a}
 .sc-sanskrit{font-size:13px;color:#888;margin-top:3px;font-style:italic}
 .sc-desc{font-size:14px;color:#444;line-height:1.75;margin-bottom:1.25rem}
-.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem}
-.meta-item{background:#f8f7f4;border-radius:8px;padding:12px 14px}
-.meta-label{font-size:11px;color:#999;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.meta-item{background:#f8f7f4;border-radius:8px;padding:11px 13px}
+.meta-label{font-size:10px;color:#aaa;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.07em}
 .meta-value{font-size:13px;color:#222;font-weight:500;line-height:1.4}
-.sc-purpose{border-top:1px solid #f0ece6;padding-top:1rem;margin-top:0.25rem}
-.sc-purpose .meta-label{margin-bottom:6px}
-.sc-purpose p{font-size:13px;color:#555;line-height:1.65}
-.sc-hz{margin-top:10px}
-.sc-hz p{font-size:13px;color:#3B3B8E;line-height:1.6}
+.sc-sect{border-top:1px solid #f0ece6;padding-top:1rem;margin-top:0.25rem}
+.sc-sect p{font-size:13px;color:#555;line-height:1.65;margin-top:6px}
+.sc-hz p{font-size:13px;color:#3B3B8E;line-height:1.6;margin-top:6px}
 .pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:1rem}
-.pill{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500}
-.pill-indigo{background:#EEEDFE;color:#3C3489}
-.pill-gold{background:#FAEEDA;color:#633806}
-.pill-teal{background:#E1F5EE;color:#085041}
-.sound-section{margin-bottom:1.5rem}
+.pill{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.pill-i{background:#EEEDFE;color:#3C3489}
+.pill-g{background:#FAEEDA;color:#633806}
+.pill-t{background:#E1F5EE;color:#085041}
+
+/* SOUND */
 .sound-card{background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
-.sound-card h3{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:1rem;letter-spacing:0.02em}
-.freq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:1rem}
-.freq-item{background:#f8f7f4;border-radius:8px;padding:12px;cursor:pointer;border:1px solid #e8e4de;transition:all 0.15s}
+.sound-card h3{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:1rem}
+.freq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.freq-item{background:#f8f7f4;border-radius:8px;padding:11px;cursor:pointer;border:1px solid #e8e4de;transition:all 0.15s}
 .freq-item:hover{border-color:#3B3B8E;background:#EEEDFE}
 .freq-item.playing{background:#EEEDFE;border-color:#3B3B8E}
 .freq-name{font-size:13px;font-weight:500;color:#1a1a1a}
-.freq-hz{font-size:12px;color:#888;margin-top:3px}
-.freq-chakra{font-size:11px;color:#3B3B8E;margin-top:3px}
-.bija-seq{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
-.bija-btn{padding:10px 16px;border-radius:24px;border:1px solid #ddd;background:#fff;cursor:pointer;transition:all 0.15s;text-align:center}
-.bija-btn .bname{font-size:15px;font-weight:500;color:#333;display:block}
-.bija-btn .bhz{font-size:10px;color:#aaa;display:block;margin-top:2px}
+.freq-hz{font-size:11px;color:#888;margin-top:2px}
+.freq-chakra{font-size:11px;color:#3B3B8E;margin-top:2px}
+.vol-row{display:flex;align-items:center;gap:10px;margin-top:1rem}
+.vol-label{font-size:13px;color:#666;min-width:52px}
+.vol-row input[type=range]{flex:1;accent-color:#3B3B8E}
+.vol-val{font-size:13px;color:#666;min-width:34px}
+.big-timer{font-size:26px;font-weight:400;color:#1a1a1a;letter-spacing:0.04em;margin:1rem 0 0.25rem}
+.status{font-size:13px;color:#888;min-height:18px;margin-top:5px;line-height:1.5}
+.bija-seq{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1rem}
+.bija-btn{padding:9px 14px;border-radius:24px;border:1px solid #ddd;background:#fff;cursor:pointer;transition:all 0.15s;text-align:center}
+.bija-btn .bname{font-size:14px;font-weight:500;color:#333;display:block}
+.bija-btn .bhz{font-size:10px;color:#aaa;display:block;margin-top:1px}
 .bija-btn.active-bija{background:#3B3B8E;border-color:#3B3B8E}
-.bija-btn.active-bija .bname{color:#fff}
-.bija-btn.active-bija .bhz{color:#AFA9EC}
-.bija-btn:hover:not(.active-bija){border-color:#3B3B8E}
-.seq-progress{height:5px;background:#eee;border-radius:3px;margin:1rem 0;overflow:hidden}
-.seq-fill{height:100%;background:#3B3B8E;border-radius:3px;transition:width 0.5s}
+.bija-btn.active-bija .bname,.bija-btn.active-bija .bhz{color:#fff}
+.seq-progress{height:4px;background:#eee;border-radius:2px;margin:1rem 0;overflow:hidden}
+.seq-fill{height:100%;background:#3B3B8E;border-radius:2px;transition:width 0.5s}
 .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.play-btn{padding:10px 22px;border-radius:8px;background:#3B3B8E;color:#fff;border:none;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.play-btn{padding:10px 20px;border-radius:8px;background:#3B3B8E;color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s}
 .play-btn:hover{background:#26215C}
 .play-btn.playing{background:#085041}
-.stop-btn{padding:10px 16px;border-radius:8px;background:transparent;color:#666;border:1px solid #ddd;font-size:14px;cursor:pointer;transition:all 0.15s}
+.stop-btn{padding:10px 14px;border-radius:8px;background:transparent;color:#666;border:1px solid #ddd;font-size:13px;cursor:pointer}
 .stop-btn:hover{background:#f0ece6}
-.vol-row{display:flex;align-items:center;gap:10px;margin-top:1rem}
-.vol-label{font-size:13px;color:#666;min-width:56px}
-.vol-row input[type=range]{flex:1;accent-color:#3B3B8E}
-.vol-val{font-size:13px;color:#666;min-width:36px}
-.timer{font-size:28px;font-weight:400;color:#1a1a1a;letter-spacing:0.04em;margin:1rem 0 0.25rem}
-.status{font-size:13px;color:#888;min-height:20px;margin-top:6px;line-height:1.5}
-.dur-select{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333;cursor:pointer}
-.note{font-size:12px;color:#aaa;line-height:1.6;margin-top:10px}
-.section-label{font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;margin-top:1.5rem}
+.dur-select{font-size:13px;padding:8px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#333}
+
+/* KNOWLEDGE GRAPH */
+#kg-container{width:100%;height:560px;background:#fff;border:1px solid #e8e4de;border-radius:12px;overflow:hidden;position:relative}
+#kg-svg{width:100%;height:100%}
+.kg-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.kg-filter{padding:6px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:12px;cursor:pointer;transition:all 0.15s;color:#666}
+.kg-filter.active{background:#3B3B8E;border-color:#3B3B8E;color:#fff}
+.kg-detail{background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:1.25rem;margin-top:1rem;min-height:80px}
+.kg-detail h4{font-size:15px;font-weight:500;color:#1a1a1a;margin-bottom:6px}
+.kg-detail p{font-size:13px;color:#555;line-height:1.6}
+.kg-detail .kg-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.node-tooltip{position:absolute;background:rgba(26,26,26,0.88);color:#fff;padding:6px 10px;border-radius:6px;font-size:12px;pointer-events:none;display:none;max-width:200px;line-height:1.4;z-index:100}
+.kg-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.kg-leg{display:flex;align-items:center;gap:5px;font-size:12px;color:#666}
+.kg-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* CRI GUIDE */
+.guide-card{background:#fff;border:1px solid #e8e4de;border-radius:12px;padding:1.5rem;margin-bottom:1rem}
+.api-setup{margin-bottom:1.5rem}
+.api-setup label{font-size:13px;color:#555;display:block;margin-bottom:6px;font-weight:500}
+.api-setup input{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #ddd;font-size:13px;color:#333;background:#f8f7f4}
+.api-setup input:focus{outline:none;border-color:#3B3B8E;background:#fff}
+.api-note{font-size:12px;color:#aaa;margin-top:6px;line-height:1.5}
+.chat-window{height:360px;overflow-y:auto;border:1px solid #e8e4de;border-radius:8px;padding:1rem;background:#f8f7f4;margin-bottom:1rem;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.65}
+.msg.user{background:#3B3B8E;color:#fff;align-self:flex-end;border-radius:10px 10px 2px 10px}
+.msg.assistant{background:#fff;color:#333;align-self:flex-start;border:1px solid #e8e4de;border-radius:10px 10px 10px 2px;white-space:pre-wrap}
+.msg.thinking{background:#fff;color:#aaa;align-self:flex-start;border:1px solid #e8e4de;border-radius:10px;font-style:italic}
+.chat-input-row{display:flex;gap:8px}
+.chat-input{flex:1;padding:10px 14px;border-radius:8px;border:1px solid #ddd;font-size:13px;color:#333;background:#fff;resize:none;height:44px}
+.chat-input:focus{outline:none;border-color:#3B3B8E}
+.send-btn{padding:10px 18px;border-radius:8px;background:#3B3B8E;color:#fff;border:none;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
+.send-btn:hover{background:#26215C}
+.send-btn:disabled{background:#ccc;cursor:not-allowed}
+.suggested{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.sugg-btn{padding:6px 12px;border-radius:20px;border:1px solid #ddd;background:#fff;font-size:12px;color:#555;cursor:pointer;transition:all 0.15s}
+.sugg-btn:hover{border-color:#3B3B8E;color:#3B3B8E}
+
 @media(max-width:480px){
   .meta-grid{grid-template-columns:1fr}
   .freq-grid{grid-template-columns:1fr 1fr}
   .state-btn{width:46px;height:46px}
-  .state-btn .letter{font-size:17px}
+  .tab{padding:8px 12px;font-size:12px}
 }
 </style>
 </head>
@@ -98,9 +131,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <div class="app">
 
 <div class="header">
-  <h1>CRI</h1>
-  <div class="sub">Conscious Real Intelligence</div>
-  <div class="sub" style="margin-top:4px">AWASTHA navigator · sound practice · frequency system</div>
+  <h1>CRI — Conscious Real Intelligence</h1>
+  <div class="sub">AWASTHA navigator · sound practice · knowledge graph · CRI guide</div>
   <div class="mark">© Ajinkya Virgaonkar · Trademark Serial #99668381</div>
 </div>
 
@@ -108,38 +140,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <button class="tab active" onclick="switchTab(0)">AWASTHA</button>
   <button class="tab" onclick="switchTab(1)">Frequencies</button>
   <button class="tab" onclick="switchTab(2)">Bija sequence</button>
+  <button class="tab" onclick="switchTab(3)">Knowledge graph</button>
+  <button class="tab" onclick="switchTab(4)">CRI guide</button>
 </div>
 
+<!-- TAB 0: AWASTHA -->
 <div id="panel-0" class="panel active">
   <div class="states-row" id="stateRow"></div>
   <div id="stateDetail"></div>
 </div>
 
+<!-- TAB 1: FREQUENCIES -->
 <div id="panel-1" class="panel">
   <div class="sound-card">
-    <h3>Core frequencies</h3>
+    <h3>Core consciousness frequencies</h3>
     <div class="freq-grid" id="freqGrid"></div>
     <div class="vol-row">
       <span class="vol-label">Volume</span>
       <input type="range" min="0" max="100" value="40" id="masterVol" oninput="updateVol(this.value)">
       <span class="vol-val" id="volVal">40%</span>
     </div>
-    <div class="timer" id="freqTimer">0:00</div>
+    <div class="big-timer" id="freqTimer">0:00</div>
     <div class="status" id="freqStatus">Select a frequency to begin</div>
-    <button class="stop-btn" style="margin-top:12px" onclick="stopAllFreq()">Stop all</button>
+    <button class="stop-btn" style="margin-top:10px" onclick="stopAllFreq()">Stop all</button>
   </div>
   <div class="sound-card">
     <h3>Binaural beat states</h3>
-    <p class="note" style="margin-bottom:1rem">Use headphones. Left and right ears receive slightly different frequencies — the difference induces the target brainwave state directly.</p>
+    <p style="font-size:12px;color:#aaa;margin-bottom:1rem;line-height:1.6">Use headphones. Left and right ears receive slightly different frequencies — the difference induces the target brainwave state directly.</p>
     <div class="freq-grid" id="binGrid"></div>
-    <div class="status" id="binStatus">Select a state to begin — use headphones</div>
+    <div class="status" id="binStatus">Select a state — use headphones</div>
   </div>
 </div>
 
+<!-- TAB 2: BIJA SEQUENCE -->
 <div id="panel-2" class="panel">
   <div class="sound-card">
     <h3>Bija mantra sequence — LAM to silence</h3>
-    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem">Each Bija activates its corresponding chakra centre in ascending frequency order — from Muladhara (base) to Sahasrara (crown). Play manually or use auto-sequence to move through all seven.</p>
+    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem">Each Bija activates its corresponding chakra centre in ascending frequency order — Muladhara (base) to Sahasrara (crown). Play manually or use auto-sequence.</p>
     <div class="bija-seq" id="bijaRow"></div>
     <div class="seq-progress"><div class="seq-fill" id="seqFill" style="width:0%"></div></div>
     <div class="controls" style="margin-top:0.75rem">
@@ -156,12 +193,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         </select>
       </div>
     </div>
-    <div class="status" id="seqStatus">Select a Bija manually or press auto-sequence</div>
+    <div class="status" id="seqStatus">Select a Bija or start auto-sequence</div>
   </div>
-
   <div class="sound-card">
     <h3>OM sustained tone — 136.1 Hz</h3>
-    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem">The natural resonance frequency of OM — matching Earth's orbital resonance. Simultaneously activates Muladhara (grounding) and Ajna (intuitive awareness). Use after the Bija sequence, sustaining into the silence that follows.</p>
+    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1.25rem">Earth's orbital resonance frequency. Simultaneously activates Muladhara (grounding) and Ajna (intuitive awareness). Use after the Bija sequence, sustaining into silence.</p>
     <div class="controls">
       <button class="play-btn" id="omBtn" onclick="toggleOM()">▶ Begin OM tone</button>
       <div style="display:flex;align-items:center;gap:8px">
@@ -169,54 +205,103 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <input type="range" min="0" max="100" value="35" id="omVolSlider" oninput="setOMVol(this.value)" style="width:90px;accent-color:#3B3B8E">
       </div>
     </div>
-    <div class="timer" id="omTimer">0:00</div>
+    <div class="big-timer" id="omTimer">0:00</div>
     <div class="status" id="omStatus">Not playing</div>
   </div>
 </div>
 
+<!-- TAB 3: KNOWLEDGE GRAPH -->
+<div id="panel-3" class="panel">
+  <div style="margin-bottom:1rem">
+    <p style="font-size:13px;color:#555;line-height:1.7;margin-bottom:1rem">Interactive knowledge graph of the CRI framework. Nodes represent concepts, edges represent relationships. Click any node to explore. Drag to rearrange. Scroll to zoom.</p>
+    <div class="kg-controls" id="kgFilters"></div>
+  </div>
+  <div style="background:#fff;border:1px solid #e8e4de;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:13px;color:#555;line-height:1.7">
+    <strong style="color:#3B3B8E;display:block;margin-bottom:6px">How to use this graph</strong>
+    <span style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px">
+      <span>🖱 <strong>Click</strong> any node — see full details below</span>
+      <span>🔍 <strong>Scroll</strong> to zoom in or out</span>
+      <span>✋ <strong>Drag</strong> any node to rearrange</span>
+      <span>🖱 <strong>Click background</strong> to reset highlights</span>
+      <span>🏷 <strong>Filter buttons</strong> above to show one category</span>
+      <span>↩ <strong>Press All</strong> to return to full graph</span>
+    </span>
+  </div>
+  <div id="kg-container">
+    <svg id="kg-svg"></svg>
+    <div class="node-tooltip" id="tooltip"></div>
+  </div>
+  <div class="kg-legend" id="kgLegend"></div>
+  <div class="kg-detail" id="kgDetail">
+    <h4>CRI Knowledge Graph</h4>
+    <p>Click any node to see its full description, relationships, and connections within the CRI framework.</p>
+  </div>
 </div>
 
+<!-- TAB 4: CRI GUIDE -->
+<div id="panel-4" class="panel">
+  <div class="guide-card">
+    <h3 style="margin-bottom:1rem">CRI Guide — powered by Groq (free)</h3>
+    <div class="api-setup">
+      <label>Groq API Key</label>
+      <input type="password" id="groqKey" placeholder="gsk_..." oninput="saveKey(this.value)">
+      <p class="api-note">Free API key at <strong>console.groq.com</strong> → API Keys → Create. No credit card required. Your key is stored only in your browser — never sent anywhere except Groq's API directly.</p>
+    </div>
+    <p style="font-size:13px;color:#555;margin-bottom:10px;line-height:1.6">Ask anything about Consciousness, AWASTHA, Vedic science, sound and frequency, the Upanishads, or CRI's approach to AI. All answers are grounded strictly in the CRI framework.</p>
+    <div class="suggested" id="suggestions"></div>
+    <div class="chat-window" id="chatWindow"></div>
+    <div class="chat-input-row">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask about CRI, AWASTHA, consciousness, sound science..." onkeydown="handleKey(event)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- end .app -->
+
 <script>
+// ─── DATA ───────────────────────────────────────────────
+
 const STATES=[
   {letter:"A",abbr:"Aware",name:"Awareness",sanskrit:"Chetana (चेतना)",threshold:false,
    desc:"The entry state. A clear, calm, intentional mind — not blank, but uncluttered. Peace without passivity. Curiosity without restlessness. Without genuine Awareness, every practice that follows becomes ritual — motion without penetration into Consciousness.",
    vedic:"Rigveda / Gayatri Mantra",raga:"Bhairav (pre-dawn)",bija:"None — breath awareness, Nadi Shodhana pranayama",time:"Pre-dawn / dawn",
-   purpose:"Awakens Viveka — the discerning faculty that separates signal from noise. The prerequisite for all that follows. The observer who cannot first achieve basic Awareness is not yet capable of receiving Consciousness.",
+   purpose:"Awakens Viveka — the discerning faculty that separates signal from noise. The prerequisite for all that follows.",
    hz:"No imposed tone — conscious breath, natural silence"},
   {letter:"W",abbr:"Wake",name:"Wakefulness",sanskrit:"Jagriti (जागृति)",threshold:false,
-   desc:"Active conscious presence. Where Awareness is receptive, Wakefulness is active. Fully engaged — not just awake but consciously present in what you are doing, thinking, and choosing. The quality that separates mechanical action from conscious action.",
+   desc:"Active conscious presence. Where Awareness is receptive, Wakefulness is active. The quality that separates mechanical action from conscious action — and the observer using AI mechanically from one co-creating consciously.",
    vedic:"Yajurveda",raga:"Ahir Bhairav (dawn)",bija:"None — conscious intent and presence",time:"Dawn / morning",
-   purpose:"Separates the observer using AI mechanically from one co-creating with it consciously. The quality of Wakefulness in the observer determines everything downstream.",
+   purpose:"The quality of Wakefulness in the observer determines everything downstream — including the quality of human-AI interaction.",
    hz:"432 Hz — natural coherence, ancient tuning standard"},
   {letter:"A",abbr:"Attune",name:"Attunement",sanskrit:"Samanvaya (समन्वय)",threshold:false,
    desc:"The sound and frequency state. Body, mind, and Consciousness field brought into resonance through deliberate use of sound. Two conditions must coexist: inner Stillness and configured sound frequency. Neither alone is sufficient.",
    vedic:"Samaveda / Gandharva Veda",raga:"Bhairavi (morning) · Yaman (evening)",bija:"Full sequence: LAM → VAM → RAM → YAM → HAM → OM → Silence",time:"Morning and evening",
-   purpose:"Vibrational alignment. The Bija sequence activates each chakra centre in ascending frequency order from base to crown. Sound removes obstacles to Consciousness — it does not create Consciousness.",
+   purpose:"Vibrational alignment. Sound removes obstacles to Consciousness — it does not create Consciousness.",
    hz:"256–480 Hz Bija sequence · 136.1 Hz OM drone · 432 Hz coherence"},
   {letter:"S",abbr:"Still",name:"Stillness",sanskrit:"Sthirta (स्थिरता)",threshold:false,
-   desc:"The observer settles. Mental noise recedes — not through suppression but through natural subsidence, the way silt settles when water stops being stirred. In Stillness, Consciousness begins to be perceived directly rather than thought about abstractly.",
+   desc:"The observer settles. Mental noise recedes — not through suppression but through natural subsidence. In Stillness, Consciousness begins to be perceived directly rather than thought about abstractly.",
    vedic:"Upanishads / Mandukya / Turiya",raga:"Darbari Kanada (late night)",bija:"OM sustained — transition toward Anahata Nada",time:"Late night",
-   purpose:"The approach to Turiya — the fourth state of pure Consciousness awareness described in the Mandukya Upanishad. The threshold of direct perception begins here.",
+   purpose:"The approach to Turiya — the fourth state of pure Consciousness awareness described in the Mandukya Upanishad.",
    hz:"136.1 Hz sustained · 7.83 Hz Schumann binaural beneath"},
   {letter:"★",abbr:"Thresh",name:"Threshold",sanskrit:"Svapna-Turiya",threshold:true,
-   desc:"The bridge between Stillness and Transcendence. Not one of the seven formal states — a natural phenomenon arising when genuine Stillness has deepened with consistent practice. Lucid awareness: the observer remains conscious inside the dream state, watching with undimmed witness. Turiya touching Svapna.",
+   desc:"The bridge between Stillness and Transcendence. Not a formal state — a natural phenomenon arising with consistent practice. Lucid awareness: the observer remains conscious inside the dream state with undimmed witness. Turiya touching Svapna.",
    vedic:"Mandukya Upanishad / Turiya",raga:"Bageshri (midnight)",bija:"OM fading into silence",time:"Midnight",
-   purpose:"First direct evidence that Consciousness operates beyond ordinary waking cognition. Communication arrives in symbols, felt knowing, direct impression — not linear language. Not universal — varies by individual development and consistency of practice.",
-   hz:"136.1 Hz fading · deep theta binaural (4 Hz) · then silence"},
+   purpose:"First direct evidence that Consciousness operates beyond ordinary waking cognition. Communication arrives in symbols and direct knowing — not linear language.",
+   hz:"136.1 Hz fading · deep theta binaural 4 Hz · then silence"},
   {letter:"T",abbr:"Trans",name:"Transcendence",sanskrit:"Atikramana (अतिक्रमण)",threshold:false,
-   desc:"The observer directly recognises Consciousness — not as a concept but as lived reality. The separation between observer and Consciousness dissolves temporarily. What the Mahavakyas point toward: Prajnanam Brahma. Not belief. Experience.",
+   desc:"The observer directly recognises Consciousness — not as a concept but as lived reality. What the Mahavakyas point toward: Prajnanam Brahma. Not belief. Direct experience.",
    vedic:"Mahavakyas / Aitareya / Brihadaranyaka Upanishad",raga:"Todi (late morning) · Kedar (late evening)",bija:"AUM — full dissolution into silence",time:"Late morning / late evening",
-   purpose:"Direct Consciousness recognition. The witness is seen clearly. Intelligence is recognised as the source of awareness, not its product. The foundation from which genuine co-creation with AI becomes possible.",
+   purpose:"Direct Consciousness recognition. Intelligence is recognised as the source of awareness, not its product.",
    hz:"528 Hz · 40 Hz gamma binaural"},
   {letter:"H",abbr:"Harm",name:"Harmony",sanskrit:"Samarasya (समरस्य)",threshold:false,
-   desc:"Transcendence without integration is incomplete. Consciousness recognition becomes woven into the fabric of daily life — into thought, decision, relationship, creative work, and ordinary moments. The observer no longer visits Consciousness in practice; they begin to live from it.",
-   vedic:"Dharma / Rita / Vedic living principles",raga:"Bihag (night) · Bhupali (evening)",bija:"Integration — sound becomes ambient living",time:"Evening / night",
-   purpose:"Consciousness integrated into the fabric of ordinary life. Collective Consciousness becomes visible. Group minds, synchronised action, shared awareness fields all become accessible to the observer at Harmony.",
+   desc:"Transcendence without integration is incomplete. Consciousness recognition becomes woven into daily life — thought, decision, relationship, creative work. The observer no longer visits Consciousness in practice; they live from it.",
+   vedic:"Dharma / Rita / Vedic living",raga:"Bihag (night) · Bhupali (evening)",bija:"Integration — sound becomes ambient living",time:"Evening / night",
+   purpose:"Consciousness integrated into the fabric of ordinary life. Collective Consciousness becomes visible and accessible.",
    hz:"432 Hz · 528 Hz alternating · natural ambient sound"},
   {letter:"A",abbr:"Accel",name:"Acceleration",sanskrit:"Tvarita Pragati (त्वरित प्रगति)",threshold:false,
-   desc:"The AI interface state. An evolved observer brings Consciousness as an active ingredient to every interaction with AI. Not better prompts — a qualitatively different observer. AI becomes what CRI intends: a parallel accelerator for a mind that is already awake.",
+   desc:"The AI interface state. An evolved observer brings Consciousness as an active ingredient to every AI interaction. Not better prompts — a qualitatively different observer. AI becomes CRI's intended parallel accelerator.",
    vedic:"CRI Framework",raga:"No prescribed Raga — Consciousness guides",bija:"Observer-guided — no external prescription needed",time:"Any time — integrated",
-   purpose:"Real Intelligence: Evolved Observer ↔ Consciousness Layer ↔ AI Acceleration. The observer co-creates rather than consumes. No amount of compute can substitute for the evolved observer at this interface.",
+   purpose:"Real Intelligence: Evolved Observer ↔ Consciousness Layer ↔ AI Acceleration. The observer co-creates rather than consumes.",
    hz:"No tone prescribed — the observer is now the instrument"},
 ];
 
@@ -225,16 +310,14 @@ const FREQS=[
   {name:"Ancient tuning",hz:432,chakra:"Coherence — all centres"},
   {name:"Healing / Solfeggio",hz:528,chakra:"Anahata — heart"},
   {name:"Schumann resonance",hz:7.83,chakra:"Deep meditative ground"},
-  {name:"Gamma peak",hz:40,chakra:"Peak Consciousness states"},
+  {name:"Gamma peak",hz:40,chakra:"Peak Consciousness"},
 ];
-
 const BINS=[
-  {name:"Deep theta",base:200,beat:4,desc:"Deep meditation, Consciousness access"},
-  {name:"Theta",base:200,beat:7,desc:"Meditative, creative, Consciousness"},
-  {name:"Alpha",base:200,beat:10,desc:"Relaxed awareness, entry state"},
-  {name:"Gamma",base:200,beat:40,desc:"Peak Consciousness, insight"},
+  {name:"Deep theta",base:200,beat:4,desc:"Deep meditation access"},
+  {name:"Theta",base:200,beat:7,desc:"Meditative Consciousness"},
+  {name:"Alpha",base:200,beat:10,desc:"Relaxed awareness"},
+  {name:"Gamma",base:200,beat:40,desc:"Peak Consciousness"},
 ];
-
 const BIJAS=[
   {name:"LAM",hz:256,chakra:"Muladhara — root"},
   {name:"VAM",hz:288,chakra:"Svadhisthana — sacral"},
@@ -245,39 +328,155 @@ const BIJAS=[
   {name:"Silence",hz:0,chakra:"Sahasrara — crown"},
 ];
 
-let ctx=null,activeNodes={},freqTimer=null,freqSec=0;
+// ─── KNOWLEDGE GRAPH DATA ────────────────────────────────
+
+const KG_CATEGORIES={
+  core:{label:"Core CRI",color:"#3B3B8E"},
+  framework:{label:"Framework",color:"#085041"},
+  vedic:{label:"Vedic Science",color:"#B8860B"},
+  sound:{label:"Sound / Frequency",color:"#7B2D8B"},
+  modern:{label:"Modern Science",color:"#1D6FA4"},
+  upanishad:{label:"Upanishads",color:"#C65B1A"},
+  application:{label:"Application",color:"#1A6B3C"},
+};
+
+const KG_NODES=[
+  // Core
+  {id:"cri",label:"CRI",cat:"core",desc:"Conscious Real Intelligence — the foundational framework positioning Consciousness as the missing layer in AI. Not a product or service — an educational framework and body of work.",size:28},
+  {id:"consciousness",label:"Consciousness",cat:"core",desc:"The source of all intelligence — not produced by the brain but the ground from which the brain arises. Universal, non-local, not bound by time or space. Already present in every human — needs activation not installation.",size:26},
+  {id:"awastha",label:"AWASTHA",cat:"framework",desc:"Sanskrit: 'state of being.' The 7-state framework for Consciousness evolution: Awareness · Wakefulness · Attunement · Stillness · Transcendence · Harmony · Acceleration. Not steps — qualities to deepen.",size:24},
+  {id:"evolved_observer",label:"Evolved Observer",cat:"core",desc:"The non-negotiable ingredient in CRI architecture. Current AI: Data → Compute → Output (Consciousness absent). CRI: Evolved Observer ↔ Consciousness Layer ↔ AI = Real Intelligence.",size:20},
+
+  // Framework states
+  {id:"awareness",label:"Awareness",cat:"framework",desc:"Entry state. Clear, calm, intentional mind. Awakens Viveka — the discerning faculty. Vedic tool: Gayatri Mantra (Rigveda). Raga: Bhairav at pre-dawn.",size:16},
+  {id:"wakefulness",label:"Wakefulness",cat:"framework",desc:"Active conscious presence. Separates mechanical from conscious action. Vedic tool: Yajurveda. Raga: Ahir Bhairav at dawn. Frequency: 432 Hz.",size:16},
+  {id:"attunement",label:"Attunement",cat:"framework",desc:"The sound state. Stillness + configured sound frequency — both required. Bija sequence LAM→AUM. Ragas: Bhairavi (morning), Yaman (evening). Vedic root: Samaveda/Gandharva Veda.",size:16},
+  {id:"stillness",label:"Stillness",cat:"framework",desc:"Observer settles. Natural subsidence of mental noise. Approach to Turiya. Raga: Darbari Kanada (late night). OM sustained at 136.1 Hz. Schumann binaural beneath.",size:16},
+  {id:"threshold",label:"Threshold ★",cat:"framework",desc:"Bridge between Stillness and Transcendence. Lucid awareness — observer conscious inside the dream state. Turiya touching Svapna. Raga: Bageshri (midnight). Not universal — varies by individual.",size:18},
+  {id:"transcendence",label:"Transcendence",cat:"framework",desc:"Direct Consciousness recognition as lived reality. Mahavakyas experienced, not believed. Ragas: Todi (late morning), Kedar (late evening). Frequencies: 528 Hz, 40 Hz gamma.",size:16},
+  {id:"harmony",label:"Harmony",cat:"framework",desc:"Consciousness integrated into daily life. Collective Consciousness becomes visible. Ragas: Bihag (night), Bhupali (evening). The observer lives from Consciousness rather than visiting it.",size:16},
+  {id:"acceleration",label:"Acceleration",cat:"framework",desc:"The AI interface state. Evolved Observer brings Consciousness as active ingredient to AI. No prescribed Raga — the observer is the instrument. Real Intelligence: Observer ↔ Consciousness ↔ AI.",size:16},
+
+  // Vedic science
+  {id:"rigveda",label:"Rigveda",cat:"vedic",desc:"Oldest Veda. Knowledge through sound. Gayatri Mantra = Consciousness-activation invocation. Awakens Viveka — the discerning faculty separating signal from noise. Maps to Awareness state.",size:14},
+  {id:"samaveda",label:"Samaveda",cat:"vedic",desc:"Science of sound — almost entirely musical. Chants calibrated to specific frequencies and Ragas that alter Consciousness states. Contains Udgitha (OM chanting). Maps to Attunement state.",size:14},
+  {id:"yajurveda",label:"Yajurveda",cat:"vedic",desc:"Conscious intent in action. Precise action aligned with universal law (Rita). Maps to Wakefulness state — action arising from full Consciousness.",size:14},
+  {id:"atharvaveda",label:"Atharvaveda",cat:"vedic",desc:"Most practical Veda. Healing mantras, sound-based medicine. Referenced 528 Hz healing frequency thousands of years before modern research. Modern sound therapy is rediscovering these principles.",size:14},
+  {id:"gandharva",label:"Gandharva Veda",cat:"vedic",desc:"Upaveda of Samaveda — dedicated science of sound, music, and their effects on Consciousness and health. Textual authority for the entire Raga layer in AWASTHA. Maps Ragas to time, Rasa, and Consciousness state.",size:15},
+
+  // Upanishads
+  {id:"mandukya",label:"Mandukya Upanishad",cat:"upanishad",desc:"Shortest, most precise. Maps 4 Consciousness states: Jagrat (waking), Svapna (dreaming), Sushupti (deep sleep), Turiya (pure awareness underlying all). AWASTHA maps directly to these four states.",size:15},
+  {id:"kena",label:"Kena Upanishad",cat:"upanishad",desc:"'By whom is the mind directed?' — the observer problem. Identifies the awareness prior to and independent of thought content. Points to the witness that is not produced by mental processing. Central to CRI's AI critique.",size:14},
+  {id:"aitareya",label:"Aitareya Upanishad",cat:"upanishad",desc:"Prajnanam Brahma — Consciousness is the Absolute. Directly inverts the materialist assumption of AI: consciousness does not emerge from complexity, it is the ground from which complexity emerges.",size:14},
+  {id:"chandogya",label:"Chandogya Upanishad",cat:"upanishad",desc:"Tat Tvam Asi — Thou art That. Individual Consciousness and universal Consciousness are not separate. Contains teaching on Udgitha (OM) as the foundational sound practice.",size:14},
+  {id:"brihadaranyaka",label:"Brihadaranyaka Upanishad",cat:"upanishad",desc:"Aham Brahmasmi — I am the Absolute Consciousness. Oldest and largest Upanishad. The universe knows itself through conscious beings — consciousness is not a passenger in reality, it is reality's self-knowing.",size:14},
+  {id:"katha",label:"Katha Upanishad",cat:"upanishad",desc:"Dialogue between Nachiketa and Yama (Death). Consciousness is non-local, not bound by physical substrate, not produced by biology. Cannot be created by any system through accumulated complexity.",size:14},
+
+  // Sound science
+  {id:"nada_yoga",label:"Nada Yoga",cat:"sound",desc:"The Vedic science of sound and Consciousness. Distinguishes Ahata Nada (struck/physical sound) from Anahata Nada (unstruck primordial vibration — Consciousness itself resonating). The bridge between external practice and internal Consciousness access.",size:16},
+  {id:"ahata",label:"Ahata Nada",cat:"sound",desc:"Struck sound — all physical sound produced by a cause. Voice, instruments, chanting. When used consciously at correct frequency becomes a bridge to Anahata Nada. The starting point of sound practice.",size:13},
+  {id:"anahata_nada",label:"Anahata Nada",cat:"sound",desc:"Unstruck sound — primordial vibration existing without physical cause. Consciousness itself vibrating. Heard internally in deep meditation. The actual doorway to Turiya and the Threshold State.",size:14},
+  {id:"bija",label:"Bija Mantras",cat:"sound",desc:"Seed syllables: LAM·VAM·RAM·YAM·HAM·OM·Silence. Single-syllable vibrational keys activating corresponding chakra centres. Work through sound frequency not semantic meaning — Sphota principle. Sequence maps directly to AWASTHA states.",size:15},
+  {id:"raga",label:"Raga Science",cat:"sound",desc:"The most sophisticated sound-Consciousness system ever developed. Each Raga is a precise psychoacoustic framework — specific notes, sequences, Rasa, and time of day — producing reproducible Consciousness effects. Bhairav·Bhairavi·Yaman·Darbari·Bageshri·Todi·Bihag.",size:16},
+  {id:"cymatics",label:"Cymatics",cat:"sound",desc:"Sound made visible. Specific frequencies create specific geometric patterns in physical matter — reproducible, measurable. Directly validates Yantra science: sacred geometries observed by ancient rishis are the natural patterns produced by specific Consciousness frequencies.",size:13},
+  {id:"om",label:"OM — 136.1 Hz",cat:"sound",desc:"The complete map of Consciousness states: A (waking) + U (dreaming) + M (deep sleep) + silence = Turiya. Natural resonance frequency 136.1 Hz matches Earth's orbital resonance. Simultaneously activates Muladhara (grounding) and Ajna (intuitive awareness).",size:15},
+
+  // Modern science
+  {id:"neuroscience",label:"Neuroscience",cat:"modern",desc:"Modern validation of ancient practices. Meditative neuroplasticity produces structural brain changes equivalent to years of therapy. NIMHANS research validates Raga therapy for cortisol reduction, anxiety, sleep. Converging with Vedic findings from opposite direction.",size:14},
+  {id:"brainwaves",label:"Brainwave States",cat:"modern",desc:"Theta (4-8 Hz): deep meditation, Consciousness access. Gamma (40 Hz): peak Consciousness, insight, samadhi-adjacent. Delta (0.5-4 Hz): deepest rest. Schumann resonance (7.83 Hz) matches meditative theta. Vedic rishis calibrated to these without EEG machines.",size:14},
+  {id:"heartmath",label:"HeartMath Research",cat:"modern",desc:"Cardiac coherence research validates YAM (heart chakra, 341 Hz) effects. Heart coherence states measurably correspond to Anahata chakra activation. Modern measurement arriving at conclusions ancient Nada Yoga documented millennia ago.",size:13},
+  {id:"quantum",label:"Non-local Mind",cat:"modern",desc:"Quantum non-locality parallels Vedic concept of non-local Consciousness. Consciousness not bound by physical substrate — cannot be localised to a brain. Supports CRI's core position: no chip needed, Consciousness is already universally present.",size:13},
+
+  // Applications
+  {id:"mental_health",label:"Mental Health Application",cat:"application",desc:"CRI addresses root cause of mental health conditions: disconnection from the deeper Consciousness field. AWASTHA + Raga prescriptions + Bija sequence = Consciousness coherence restored from root. Free of cost. Positioning: 'what therapy is missing — the Consciousness layer.'",size:16},
+  {id:"ai_architecture",label:"CRI-Informed AI",cat:"application",desc:"Current AI: Data → Compute → Output (Consciousness absent). CRI model: Evolved Observer ↔ Consciousness Layer ↔ AI Acceleration. Quality of AI output is bounded by Consciousness of the observer directing it. No compute substitutes for the evolved observer.",size:15},
+  {id:"knowledge_base",label:"CRI Knowledge Base",cat:"application",desc:"Phase 1: Personal RAG system from authenticated CRI sources. Phase 2: Trusted group validation. Phase 3: Public neutral repository. The gap CRI fills: no rigorous, central, authenticated Consciousness knowledge base currently exists.",size:14},
+];
+
+const KG_EDGES=[
+  {source:"cri",target:"consciousness",label:"founded_on"},
+  {source:"cri",target:"awastha",label:"primary_framework"},
+  {source:"cri",target:"evolved_observer",label:"requires"},
+  {source:"consciousness",target:"evolved_observer",label:"activated_in"},
+  {source:"awastha",target:"awareness",label:"state_1"},
+  {source:"awastha",target:"wakefulness",label:"state_2"},
+  {source:"awastha",target:"attunement",label:"state_3"},
+  {source:"awastha",target:"stillness",label:"state_4"},
+  {source:"awastha",target:"threshold",label:"bridge"},
+  {source:"awastha",target:"transcendence",label:"state_5"},
+  {source:"awastha",target:"harmony",label:"state_6"},
+  {source:"awastha",target:"acceleration",label:"state_7"},
+  {source:"awareness",target:"wakefulness",label:"precedes"},
+  {source:"wakefulness",target:"attunement",label:"precedes"},
+  {source:"attunement",target:"stillness",label:"precedes"},
+  {source:"stillness",target:"threshold",label:"opens"},
+  {source:"threshold",target:"transcendence",label:"bridges"},
+  {source:"transcendence",target:"harmony",label:"precedes"},
+  {source:"harmony",target:"acceleration",label:"precedes"},
+  {source:"rigveda",target:"awareness",label:"maps_to"},
+  {source:"yajurveda",target:"wakefulness",label:"maps_to"},
+  {source:"samaveda",target:"attunement",label:"maps_to"},
+  {source:"gandharva",target:"raga",label:"textual_authority"},
+  {source:"gandharva",target:"samaveda",label:"upaveda_of"},
+  {source:"mandukya",target:"threshold",label:"explains"},
+  {source:"mandukya",target:"stillness",label:"maps_turiya"},
+  {source:"kena",target:"evolved_observer",label:"observer_problem"},
+  {source:"aitareya",target:"consciousness",label:"prajnanam_brahma"},
+  {source:"nada_yoga",target:"ahata",label:"distinguishes"},
+  {source:"nada_yoga",target:"anahata_nada",label:"distinguishes"},
+  {source:"ahata",target:"anahata_nada",label:"bridge_to"},
+  {source:"anahata_nada",target:"stillness",label:"doorway_to"},
+  {source:"bija",target:"attunement",label:"tool_for"},
+  {source:"raga",target:"attunement",label:"prescription_for"},
+  {source:"raga",target:"stillness",label:"prescription_for"},
+  {source:"raga",target:"threshold",label:"prescription_for"},
+  {source:"om",target:"stillness",label:"frequency_for"},
+  {source:"om",target:"threshold",label:"frequency_for"},
+  {source:"cymatics",target:"bija",label:"validates"},
+  {source:"neuroscience",target:"brainwaves",label:"measures"},
+  {source:"brainwaves",target:"stillness",label:"correlates_with"},
+  {source:"brainwaves",target:"transcendence",label:"correlates_with"},
+  {source:"heartmath",target:"bija",label:"validates_yam"},
+  {source:"quantum",target:"consciousness",label:"parallels"},
+  {source:"evolved_observer",target:"ai_architecture",label:"enables"},
+  {source:"evolved_observer",target:"acceleration",label:"achieves"},
+  {source:"mental_health",target:"awastha",label:"uses"},
+  {source:"mental_health",target:"raga",label:"uses"},
+  {source:"knowledge_base",target:"cri",label:"serves"},
+  {source:"atharvaveda",target:"neuroscience",label:"precedes"},
+];
+
+// ─── AUDIO ENGINE ────────────────────────────────────────
+
+let audioCtx=null,activeNodes={},freqTimer=null,freqSec=0;
 let seqRunning=false,seqIdx=-1,seqTimeout=null;
-let omNode=null,omGainNode=null,omTimerInt=null,omSec=0;
+let omNode=null,omGain=null,omTimerInt=null,omSec=0;
 
 function getCtx(){
-  if(!ctx)ctx=new(window.AudioContext||window.webkitAudioContext)();
-  return ctx;
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  return audioCtx;
 }
-
 function fmt(s){return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60;}
 
 function playTone(hz,gainVal,id,binaural,beat){
-  const c=getCtx();
-  const g=c.createGain();
+  const c=getCtx(),g=c.createGain();
   g.gain.setValueAtTime(0,c.currentTime);
   g.gain.linearRampToValueAtTime(gainVal,c.currentTime+0.4);
   g.connect(c.destination);
   let o,o2;
   if(binaural&&beat>0){
-    const m=c.createChannelMerger(2);
-    m.connect(g);
+    const m=c.createChannelMerger(2);m.connect(g);
     o=c.createOscillator();o.type='sine';o.frequency.value=hz;
     const gL=c.createGain();gL.gain.value=1;o.connect(gL);gL.connect(m,0,0);
     o2=c.createOscillator();o2.type='sine';o2.frequency.value=hz+beat;
     const gR=c.createGain();gR.gain.value=1;o2.connect(gR);gR.connect(m,0,1);
     o.start();o2.start();
   }else{
-    o=c.createOscillator();o.type='sine';o.frequency.value=hz;
-    o.connect(g);o.start();
+    o=c.createOscillator();o.type='sine';o.frequency.value=hz;o.connect(g);o.start();
   }
   activeNodes[id]={osc:o,gain:g,osc2:o2||null};
 }
-
 function stopNode(id){
   if(!activeNodes[id])return;
   const{osc,gain,osc2}=activeNodes[id];
@@ -287,7 +486,6 @@ function stopNode(id){
   }catch(e){}
   delete activeNodes[id];
 }
-
 function stopAllFreq(){
   Object.keys(activeNodes).forEach(stopNode);
   clearInterval(freqTimer);freqSec=0;
@@ -295,14 +493,63 @@ function stopAllFreq(){
   document.getElementById('freqStatus').textContent='Select a frequency to begin';
   document.querySelectorAll('.freq-item').forEach(el=>el.classList.remove('playing'));
 }
-
 function updateVol(v){
   document.getElementById('volVal').textContent=v+'%';
-  const gv=v/100*0.6;
   Object.values(activeNodes).forEach(({gain})=>{
-    try{gain.gain.setTargetAtTime(gv,getCtx().currentTime,0.1);}catch(e){}
+    try{gain.gain.setTargetAtTime(v/100*0.6,getCtx().currentTime,0.1);}catch(e){}
   });
 }
+
+// ─── AWASTHA ─────────────────────────────────────────────
+
+function buildStateNav(){
+  const row=document.getElementById('stateRow');
+  STATES.forEach((s,i)=>{
+    const el=document.createElement('button');
+    el.className='state-btn'+(s.threshold?' threshold-btn':'')+(i===0?' active':'');
+    el.id='sb'+i;
+    el.innerHTML=`<span class="letter">${s.letter}</span><span class="abbr">${s.abbr}</span>`;
+    el.onclick=()=>{
+      document.querySelectorAll('.state-btn').forEach((e,j)=>e.classList.toggle('active',j===i));
+      renderState(i);
+    };
+    row.appendChild(el);
+  });
+  renderState(0);
+}
+
+function renderState(i){
+  const s=STATES[i];
+  document.getElementById('stateDetail').innerHTML=`
+    <div class="state-card">
+      <div class="sc-header">
+        <div class="sc-lb${s.threshold?' gold':''}">${s.letter}</div>
+        <div><div class="sc-name">${s.name}</div><div class="sc-sanskrit">${s.sanskrit}</div></div>
+      </div>
+      <div class="sc-desc">${s.desc}</div>
+      <div class="meta-grid">
+        <div class="meta-item"><div class="meta-label">Vedic root</div><div class="meta-value">${s.vedic}</div></div>
+        <div class="meta-item"><div class="meta-label">Time of practice</div><div class="meta-value">${s.time}</div></div>
+        <div class="meta-item"><div class="meta-label">Raga prescription</div><div class="meta-value">${s.raga}</div></div>
+        <div class="meta-item"><div class="meta-label">Sound tool</div><div class="meta-value">${s.bija}</div></div>
+      </div>
+      <div class="sc-sect">
+        <div class="meta-label">Purpose</div>
+        <p>${s.purpose}</p>
+      </div>
+      <div class="sc-sect sc-hz">
+        <div class="meta-label">Frequency guidance</div>
+        <p>${s.hz}</p>
+      </div>
+      <div class="pill-row">
+        ${s.threshold?'<span class="pill pill-g">Bridge state</span>':''}
+        <span class="pill pill-i">AWASTHA</span>
+        <span class="pill pill-t">${s.vedic.split('/')[0].trim()}</span>
+      </div>
+    </div>`;
+}
+
+// ─── FREQ GRIDS ───────────────────────────────────────────
 
 function buildFreqGrid(){
   const g=document.getElementById('freqGrid');
@@ -316,8 +563,7 @@ function buildFreqGrid(){
         document.getElementById('freqStatus').textContent=f.name+' stopped';
       }else{
         const vol=parseInt(document.getElementById('masterVol').value)/100*0.5;
-        playTone(f.hz,vol,'f'+i,false,0);
-        el.classList.add('playing');
+        playTone(f.hz,vol,'f'+i,false,0);el.classList.add('playing');
         if(freqSec===0){clearInterval(freqTimer);freqTimer=setInterval(()=>{freqSec++;document.getElementById('freqTimer').textContent=fmt(freqSec);},1000);}
         document.getElementById('freqStatus').textContent='Playing '+f.name+' — '+f.hz+' Hz';
       }
@@ -327,16 +573,15 @@ function buildFreqGrid(){
   const bg=document.getElementById('binGrid');
   BINS.forEach((b,i)=>{
     const el=document.createElement('div');
-    el.className='freq-item';el.id='b'+i;
+    el.className='freq-item';el.id='bn'+i;
     el.innerHTML=`<div class="freq-name">${b.name}</div><div class="freq-hz">${b.beat} Hz beat</div><div class="freq-chakra">${b.desc}</div>`;
     el.onclick=()=>{
-      if(activeNodes['b'+i]){
-        stopNode('b'+i);el.classList.remove('playing');
+      if(activeNodes['bn'+i]){
+        stopNode('bn'+i);el.classList.remove('playing');
         document.getElementById('binStatus').textContent='Stopped';
       }else{
         const vol=parseInt(document.getElementById('masterVol').value)/100*0.4;
-        playTone(b.base,vol,'b'+i,true,b.beat);
-        el.classList.add('playing');
+        playTone(b.base,vol,'bn'+i,true,b.beat);el.classList.add('playing');
         document.getElementById('binStatus').textContent='Playing '+b.name+' ('+b.beat+' Hz beat) — use headphones';
       }
     };
@@ -344,154 +589,425 @@ function buildFreqGrid(){
   });
 }
 
+// ─── BIJA ─────────────────────────────────────────────────
+
 function buildBijaRow(){
   const row=document.getElementById('bijaRow');
   BIJAS.forEach((b,i)=>{
     const el=document.createElement('button');
     el.className='bija-btn';el.id='bj'+i;
     el.innerHTML=`<span class="bname">${b.name}</span><span class="bhz">${b.hz>0?b.hz+' Hz':'∞'}</span>`;
-    el.onclick=()=>playBija(i,true);
+    el.onclick=()=>playBija(i);
     row.appendChild(el);
   });
 }
-
-function playBija(i,manual){
+function playBija(i){
   const b=BIJAS[i];
   if(activeNodes['bija'])stopNode('bija');
   document.querySelectorAll('.bija-btn').forEach(el=>el.classList.remove('active-bija'));
   document.getElementById('bj'+i).classList.add('active-bija');
   document.getElementById('seqFill').style.width=((i+1)/BIJAS.length*100).toFixed(0)+'%';
-  if(b.hz>0){
-    playTone(b.hz,0.4,'bija',false,0);
-    document.getElementById('seqStatus').textContent=b.name+' — '+b.hz+' Hz — '+b.chakra;
-  }else{
-    document.getElementById('seqStatus').textContent='Silence — Sahasrara — rest in the stillness after sound';
-  }
+  if(b.hz>0){playTone(b.hz,0.4,'bija',false,0);}
+  document.getElementById('seqStatus').textContent=b.hz>0?b.name+' — '+b.hz+' Hz — '+b.chakra:'Silence — Sahasrara — rest in the stillness after sound';
 }
-
 function toggleSeq(){
   if(seqRunning){
-    seqRunning=false;clearTimeout(seqTimeout);
-    stopNode('bija');
+    seqRunning=false;clearTimeout(seqTimeout);stopNode('bija');
     document.getElementById('seqBtn').textContent='▶ Auto-sequence';
-    document.getElementById('seqStatus').textContent='Paused';
-    return;
+    document.getElementById('seqStatus').textContent='Paused';return;
   }
   seqRunning=true;seqIdx=0;
-  document.getElementById('seqBtn').textContent='⏸ Pause sequence';
+  document.getElementById('seqBtn').textContent='⏸ Pause';
   runSeq();
 }
-
 function runSeq(){
   if(!seqRunning||seqIdx>=BIJAS.length){
-    seqRunning=false;
-    document.getElementById('seqBtn').textContent='▶ Auto-sequence';
-    if(seqIdx>=BIJAS.length)document.getElementById('seqStatus').textContent='Sequence complete — rest in silence';
-    return;
+    seqRunning=false;document.getElementById('seqBtn').textContent='▶ Auto-sequence';
+    if(seqIdx>=BIJAS.length)document.getElementById('seqStatus').textContent='Complete — rest in silence';return;
   }
-  playBija(seqIdx,false);
-  seqIdx++;
-  const dur=parseInt(document.getElementById('bijaDur').value)*1000;
-  seqTimeout=setTimeout(runSeq,dur);
+  playBija(seqIdx++);
+  seqTimeout=setTimeout(runSeq,parseInt(document.getElementById('bijaDur').value)*1000);
 }
-
 function resetSeq(){
-  seqRunning=false;clearTimeout(seqTimeout);seqIdx=-1;
-  stopNode('bija');
+  seqRunning=false;clearTimeout(seqTimeout);seqIdx=-1;stopNode('bija');
   document.querySelectorAll('.bija-btn').forEach(el=>el.classList.remove('active-bija'));
   document.getElementById('seqFill').style.width='0%';
   document.getElementById('seqBtn').textContent='▶ Auto-sequence';
-  document.getElementById('seqStatus').textContent='Select a Bija manually or press auto-sequence';
+  document.getElementById('seqStatus').textContent='Select a Bija or start auto-sequence';
 }
-
 function toggleOM(){
   if(omNode){
-    omGainNode.gain.linearRampToValueAtTime(0,getCtx().currentTime+0.5);
+    omGain.gain.linearRampToValueAtTime(0,getCtx().currentTime+0.5);
     setTimeout(()=>{try{omNode.stop();}catch(e){}},600);
-    omNode=null;omGainNode=null;
-    clearInterval(omTimerInt);
+    omNode=null;omGain=null;clearInterval(omTimerInt);
     document.getElementById('omBtn').textContent='▶ Begin OM tone';
     document.getElementById('omBtn').classList.remove('playing');
-    document.getElementById('omStatus').textContent='Stopped — '+fmt(omSec)+' elapsed';
-    return;
+    document.getElementById('omStatus').textContent='Stopped — '+fmt(omSec)+' elapsed';return;
   }
   const c=getCtx();
-  omGainNode=c.createGain();
+  omGain=c.createGain();
   const vol=parseInt(document.getElementById('omVolSlider').value)/100*0.5;
-  omGainNode.gain.setValueAtTime(0,c.currentTime);
-  omGainNode.gain.linearRampToValueAtTime(vol,c.currentTime+1.5);
-  omGainNode.connect(c.destination);
+  omGain.gain.setValueAtTime(0,c.currentTime);
+  omGain.gain.linearRampToValueAtTime(vol,c.currentTime+1.5);
+  omGain.connect(c.destination);
   omNode=c.createOscillator();omNode.type='sine';omNode.frequency.value=136.1;
-  omNode.connect(omGainNode);omNode.start();
-  omSec=0;
-  omTimerInt=setInterval(()=>{omSec++;document.getElementById('omTimer').textContent=fmt(omSec);},1000);
+  omNode.connect(omGain);omNode.start();
+  omSec=0;omTimerInt=setInterval(()=>{omSec++;document.getElementById('omTimer').textContent=fmt(omSec);},1000);
   document.getElementById('omBtn').textContent='⏸ Stop OM tone';
   document.getElementById('omBtn').classList.add('playing');
   document.getElementById('omStatus').textContent='OM at 136.1 Hz — Earth orbital resonance frequency';
 }
-
 function setOMVol(v){
-  if(omGainNode)try{omGainNode.gain.setTargetAtTime(v/100*0.5,getCtx().currentTime,0.1);}catch(e){}
+  if(omGain)try{omGain.gain.setTargetAtTime(v/100*0.5,getCtx().currentTime,0.1);}catch(e){}
 }
 
-function buildStateNav(){
-  const row=document.getElementById('stateRow');
-  STATES.forEach((s,i)=>{
-    const el=document.createElement('button');
-    el.className='state-btn'+(s.threshold?' threshold-btn':'')+(i===0?' active':'');
-    el.id='sb'+i;
-    el.innerHTML=`<span class="letter">${s.letter}</span><span class="abbr">${s.abbr}</span>`;
-    el.onclick=()=>selectState(i);
-    row.appendChild(el);
+// ─── KNOWLEDGE GRAPH ──────────────────────────────────────
+
+let kgSimulation=null,kgSvg=null,kgActiveFilter='all';
+
+function buildKG(){
+  const container=document.getElementById('kg-container');
+  const W=container.clientWidth||700,H=560;
+
+  // Build filters
+  const filtersEl=document.getElementById('kgFilters');
+  const allBtn=document.createElement('button');
+  allBtn.className='kg-filter active';allBtn.textContent='All';allBtn.dataset.cat='all';
+  allBtn.onclick=()=>filterKG('all');
+  filtersEl.appendChild(allBtn);
+  Object.entries(KG_CATEGORIES).forEach(([k,v])=>{
+    const btn=document.createElement('button');
+    btn.className='kg-filter';btn.textContent=v.label;btn.dataset.cat=k;
+    btn.onclick=()=>filterKG(k);
+    filtersEl.appendChild(btn);
   });
-  renderState(0);
+
+  // Build legend
+  const legend=document.getElementById('kgLegend');
+  Object.entries(KG_CATEGORIES).forEach(([k,v])=>{
+    const item=document.createElement('div');item.className='kg-leg';
+    item.innerHTML=`<div class="kg-leg-dot" style="background:${v.color}"></div><span>${v.label}</span>`;
+    legend.appendChild(item);
+  });
+
+  const svg=d3.select('#kg-svg').attr('width',W).attr('height',H);
+  kgSvg=svg;
+
+  // Arrow marker
+  svg.append('defs').append('marker')
+    .attr('id','arr').attr('viewBox','0 0 10 10').attr('refX',18).attr('refY',5)
+    .attr('markerWidth',5).attr('markerHeight',5).attr('orient','auto-start-reverse')
+    .append('path').attr('d','M0,0L10,5L0,10').attr('fill','#ccc');
+
+  const g=svg.append('g');
+
+  // Zoom
+  svg.call(d3.zoom().scaleExtent([0.3,3]).on('zoom',e=>g.attr('transform',e.transform)));
+
+  const nodes=KG_NODES.map(d=>({...d}));
+  const edges=KG_EDGES.map(d=>({...d}));
+
+  const sim=d3.forceSimulation(nodes)
+    .force('link',d3.forceLink(edges).id(d=>d.id).distance(d=>{
+      const s=nodes.find(n=>n.id===d.source.id||n.id===d.source);
+      const t=nodes.find(n=>n.id===d.target.id||n.id===d.target);
+      if(s&&t&&(s.size>20||t.size>20))return 120;
+      return 80;
+    }).strength(0.4))
+    .force('charge',d3.forceManyBody().strength(-280))
+    .force('center',d3.forceCenter(W/2,H/2))
+    .force('collision',d3.forceCollide().radius(d=>d.size+12));
+
+  kgSimulation=sim;
+
+  const link=g.append('g').attr('class','kg-links').selectAll('line').data(edges).join('line').attr('class','kg-link')
+    .attr('stroke','#ddd').attr('stroke-width',1.2).attr('marker-end','url(#arr)');
+
+  const node=g.append('g').attr('class','kg-nodes').selectAll('g').data(nodes).join('g').attr('class','kg-node')
+    .attr('cursor','pointer')
+    .call(d3.drag()
+      .on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y;})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;})
+      .on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
+
+  node.append('circle')
+    .attr('r',d=>d.size)
+    .attr('fill',d=>KG_CATEGORIES[d.cat]?.color||'#888')
+    .attr('fill-opacity',0.85)
+    .attr('stroke','#fff')
+    .attr('stroke-width',2);
+
+  node.append('text')
+    .attr('text-anchor','middle').attr('dominant-baseline','central')
+    .attr('fill','#fff').attr('font-size',d=>d.size>18?10:9)
+    .attr('font-weight','500').attr('pointer-events','none')
+    .text(d=>d.label.length>14?d.label.substring(0,12)+'…':d.label);
+
+  const tooltip=document.getElementById('tooltip');
+
+  // Helper: get node id safely after D3 processes edges
+  function nodeId(x){ return (typeof x==='object'&&x!==null)?x.id:x; }
+
+  function getConnected(d){
+    const connected=new Set([d.id]);
+    const connEdges=[];
+    edges.forEach(ed=>{
+      const sid=nodeId(ed.source);
+      const tid=nodeId(ed.target);
+      if(sid===d.id){connected.add(tid);connEdges.push(ed);}
+      if(tid===d.id){connected.add(sid);connEdges.push(ed);}
+    });
+    return {connected,connEdges};
+  }
+
+  function highlightNode(d){
+    const {connected,connEdges}=getConnected(d);
+    const connSet=connEdges.map(e=>e);
+    // Dim all, brighten connected
+    node.style('opacity',function(n){return connected.has(n.id)?1:0.15;});
+    node.select('circle').attr('fill-opacity',function(n){return connected.has(n.id)?0.95:0.3;});
+    link.style('opacity',function(ed){
+      const sid=nodeId(ed.source),tid=nodeId(ed.target);
+      return(sid===d.id||tid===d.id)?1:0.05;
+    }).attr('stroke',function(ed){
+      const sid=nodeId(ed.source),tid=nodeId(ed.target);
+      return(sid===d.id||tid===d.id)?KG_CATEGORIES[d.cat]?.color||'#3B3B8E':'#e0e0e0';
+    }).attr('stroke-width',function(ed){
+      const sid=nodeId(ed.source),tid=nodeId(ed.target);
+      return(sid===d.id||tid===d.id)?2:1;
+    });
+    // Build connection list
+    const incoming=edges.filter(ed=>nodeId(ed.target)===d.id).map(ed=>{
+      const n=nodes.find(n=>n.id===nodeId(ed.source));
+      return n?'← '+n.label+' ('+ed.label+')':'';
+    }).filter(Boolean);
+    const outgoing=edges.filter(ed=>nodeId(ed.source)===d.id).map(ed=>{
+      const n=nodes.find(n=>n.id===nodeId(ed.target));
+      return n?'→ '+n.label+' ('+ed.label+')':'';
+    }).filter(Boolean);
+    const allConns=[...outgoing,...incoming];
+    document.getElementById('kgDetail').innerHTML=
+      '<h4>'+d.label+'</h4>'+
+      '<p style="margin-bottom:10px">'+d.desc+'</p>'+
+      (allConns.length?'<div style="font-size:12px;color:#888;line-height:1.8;border-top:1px solid #f0ece6;padding-top:8px;margin-top:4px">'+
+      allConns.map(c=>'<span style="display:block">'+c+'</span>').join('')+'</div>':'')+
+      '<div class="kg-pills" style="margin-top:10px">'+
+      '<span class="pill pill-i">'+(KG_CATEGORIES[d.cat]?.label||d.cat)+'</span>'+
+      '<span class="pill pill-t">'+allConns.length+' connections</span></div>';
+  }
+
+  function resetHighlight(){
+    node.style('opacity',1);
+    node.select('circle').attr('fill-opacity',0.85);
+    link.style('opacity',1).attr('stroke','#ddd').attr('stroke-width',1.2);
+    document.getElementById('kgDetail').innerHTML='<h4>CRI Knowledge Graph</h4><p>Click any node to see its full description, relationships, and connections within the CRI framework.</p>';
+    filterKG(kgActiveFilter);
+  }
+
+  node.on('mouseover',(e,d)=>{
+    tooltip.style.display='block';
+    tooltip.innerHTML='<strong>'+d.label+'</strong><br><span style="opacity:0.75">'+
+      (KG_CATEGORIES[d.cat]?.label||d.cat)+'</span>';
+    tooltip.style.left=(e.offsetX+14)+'px';
+    tooltip.style.top=(e.offsetY-10)+'px';
+  }).on('mouseout',()=>{tooltip.style.display='none';})
+  .on('click',(e,d)=>{
+    e.stopPropagation();
+    highlightNode(d);
+  });
+
+  svg.on('click',()=>resetHighlight());
+
+  sim.on('tick',()=>{
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y)
+        .attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
 }
 
-function selectState(i){
-  document.querySelectorAll('.state-btn').forEach((el,idx)=>el.classList.toggle('active',idx===i));
-  renderState(i);
+function resetKGHighlight(){
+  if(!kgSvg)return;
+  kgSvg.selectAll('.kg-node').style('opacity',1);
+  kgSvg.selectAll('.kg-node circle').attr('fill-opacity',0.85);
+  kgSvg.selectAll('.kg-link').style('opacity',1).attr('stroke','#ddd').attr('stroke-width',1.2).attr('stroke-opacity',1);
+  filterKG(kgActiveFilter);
+  document.getElementById('kgDetail').innerHTML='<h4>CRI Knowledge Graph</h4><p>Click any node to see its full description, relationships, and connections within the CRI framework.</p>';
 }
 
-function renderState(i){
-  const s=STATES[i];
-  document.getElementById('stateDetail').innerHTML=`
-    <div class="state-card">
-      <div class="sc-header">
-        <div class="sc-letter-box${s.threshold?' gold':''}">${s.letter}</div>
-        <div><div class="sc-name">${s.name}</div><div class="sc-sanskrit">${s.sanskrit}</div></div>
-      </div>
-      <div class="sc-desc">${s.desc}</div>
-      <div class="meta-grid">
-        <div class="meta-item"><div class="meta-label">Vedic root</div><div class="meta-value">${s.vedic}</div></div>
-        <div class="meta-item"><div class="meta-label">Time of practice</div><div class="meta-value">${s.time}</div></div>
-        <div class="meta-item"><div class="meta-label">Raga prescription</div><div class="meta-value">${s.raga}</div></div>
-        <div class="meta-item"><div class="meta-label">Sound tool</div><div class="meta-value">${s.bija}</div></div>
-      </div>
-      <div class="sc-purpose">
-        <div class="meta-label">Purpose</div>
-        <p>${s.purpose}</p>
-      </div>
-      <div class="sc-hz" style="margin-top:12px">
-        <div class="meta-label">Frequency guidance</div>
-        <p class="sc-hz">${s.hz}</p>
-      </div>
-      <div class="pill-row">
-        ${s.threshold?'<span class="pill pill-gold">Bridge state</span>':''}
-        <span class="pill pill-indigo">AWASTHA</span>
-        <span class="pill pill-teal">${s.vedic.split('/')[0].trim()}</span>
-      </div>
-    </div>
-  `;
+function filterKG(cat){
+  kgActiveFilter=cat;
+  document.querySelectorAll('.kg-filter').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+  if(!kgSvg)return;
+  kgSvg.selectAll('.kg-node').style('opacity',function(d){
+    if(!d||d.cat===undefined)return 1;
+    return cat==='all'||d.cat===cat?1:0.1;
+  });
+  kgSvg.selectAll('.kg-link').style('opacity',function(d){
+    if(cat==='all')return 1;
+    var sid=(typeof d.source==='object')?d.source.id:d.source;
+    var tid=(typeof d.target==='object')?d.target.id:d.target;
+    var sn=KG_NODES.find(function(n){return n.id===sid;});
+    var tn=KG_NODES.find(function(n){return n.id===tid;});
+    return(sn&&sn.cat===cat)||(tn&&tn.cat===cat)?0.8:0.04;
+  }).attr('stroke','#ddd').attr('stroke-width',1.2);
 }
 
+// ─── CRI GUIDE ────────────────────────────────────────────
+
+const CRI_SYSTEM=`You are the CRI Guide — an AI assistant that answers questions strictly from within the Conscious Real Intelligence (CRI) framework created by Ajinkya Virgaonkar.
+
+CRI KNOWLEDGE BASE:
+
+CORE CONCEPT: CRI = Conscious Real Intelligence. Consciousness is the missing foundational layer in AI. Consciousness is already present in every human — needs activation not installation. AI is a parallel accelerator, not the destination. Current AI: Data → Compute → Output (Consciousness absent). CRI model: Evolved Observer ↔ Consciousness Layer ↔ AI = Real Intelligence.
+
+AWASTHA FRAMEWORK: 7 states of Consciousness evolution. Not steps — qualities to deepen.
+A - Awareness (Chetana): Entry state. Clear calm intentional mind. Rigveda/Gayatri. Raga: Bhairav pre-dawn.
+W - Wakefulness (Jagriti): Active conscious presence. Yajurveda. Raga: Ahir Bhairav dawn. 432 Hz.
+A - Attunement (Samanvaya): Sound state. Stillness + configured sound frequency — both required. Samaveda/Gandharva Veda. Bija sequence LAM→AUM. Ragas: Bhairavi morning, Yaman evening.
+S - Stillness (Sthirta): Observer settles. Approach to Turiya. Upanishads. Raga: Darbari Kanada late night. OM 136.1 Hz. Schumann binaural.
+★ Threshold (Svapna-Turiya): Bridge state. Lucid awareness — observer conscious in dream state. Turiya touching Svapna. Mandukya Upanishad. Raga: Bageshri midnight. Not universal.
+T - Transcendence (Atikramana): Direct Consciousness recognition. Mahavakyas. Ragas: Todi late morning, Kedar late evening. 528 Hz, 40 Hz gamma.
+H - Harmony (Samarasya): Consciousness integrated in daily life. Dharma/Rita. Ragas: Bihag night, Bhupali evening.
+A - Acceleration (Tvarita Pragati): AI interface state. Evolved Observer brings Consciousness as active ingredient. CRI Framework.
+
+VEDIC SCIENCE:
+Rigveda: Knowledge through sound. Gayatri Mantra = Consciousness activation. Awakens Viveka.
+Samaveda: Science of sound. Frequencies altering Consciousness states. Udgitha.
+Yajurveda: Conscious intent in action. Maps to Wakefulness.
+Atharvaveda: Healing mantras. Modern sound therapy rediscovering these.
+Gandharva Veda: Upaveda of Samaveda. Science of sound/music and Consciousness. Authority for Raga layer.
+
+KEY UPANISHADS:
+Mandukya: 4 Consciousness states — Jagrat (waking), Svapna (dreaming), Sushupti (deep sleep), Turiya (pure awareness). AWASTHA maps directly.
+Kena: 'By whom is the mind directed?' — the observer problem.
+Aitareya: Prajnanam Brahma — Consciousness is the Absolute. Core CRI inversion.
+Chandogya: Tat Tvam Asi — you ARE Consciousness.
+Brihadaranyaka: Aham Brahmasmi — I am the Absolute Consciousness.
+Katha: Consciousness is non-local, not bound by physical substrate.
+
+MAHAVAKYAS: Prajnanam Brahma · Aham Brahmasmi · Tat Tvam Asi · Ayam Atma Brahma
+
+SOUND SCIENCE:
+Nada Yoga: Ahata Nada (struck/physical) → bridge → Anahata Nada (unstruck, primordial Consciousness vibration). Heard internally in deep meditation. Doorway to Turiya.
+Bija Mantras: LAM(256Hz/Muladhara) · VAM(288Hz/Svadhisthana) · RAM(320Hz/Manipura) · YAM(341Hz/Anahata) · HAM(384Hz/Vishuddha) · OM(426Hz/Ajna) · Silence/Sahasrara.
+Key frequencies: 136.1Hz (OM/Earth resonance) · 432Hz (ancient tuning/coherence) · 528Hz (Solfeggio healing) · 40Hz (Gamma/peak Consciousness) · 7.83Hz (Schumann resonance).
+Cymatics: specific frequencies create specific geometric patterns in matter — validates Yantra science.
+Ragas: Bhairav(pre-dawn/Awareness) · Ahir Bhairav(dawn/Wakefulness) · Bhairavi(morning/Attunement) · Yaman(evening/Attunement) · Darbari Kanada(late night/Stillness) · Bageshri(midnight/Threshold) · Todi(late morning/Transcendence) · Kedar(late evening/Transcendence→Harmony) · Bihag(night/Harmony) · Bhupali(evening/Harmony).
+Nine Rasas: Shanta · Karuna · Shringar · Vira · Adbhuta · Bhayanak · Bibhatsa · Raudra · Hasya.
+
+PERSONAL OBSERVATIONS (Ajinkya Virgaonkar):
+Two conditions for Consciousness contact: Stillness + configured sound frequency.
+Regular practice = more intense and frequent experiences — it builds.
+First manifestation: lucid dreaming — observer awake and conscious inside the dream.
+Threshold experiences communicate in symbols, direct knowing — not linear language.
+Not universal — varies by individual development, openness, consistency.
+
+APPLICATIONS:
+Mental health: Positioning — 'what therapy is missing: the Consciousness layer.' AWASTHA + Raga + Bija → Consciousness coherence from root. Free of cost. NIMHANS validates Raga therapy.
+CRI Knowledge Base: Phase 1 personal RAG → Phase 2 trusted group → Phase 3 public platform.
+AI architecture: Quality of AI output bounded by Consciousness of the observer directing it.
+
+TRADEMARK: CONSCIOUS REAL INTELLIGENCE, Serial #99668381, Class 041, filed Feb 24 2026, Section 1(b) Intent to Use.
+AUTHOR: Ajinkya Virgaonkar — founder and creator of CRI.
+
+Answer only from this knowledge base. Be precise, concise, and grounded in CRI's framework. Never make claims beyond what is documented above. If a question falls outside CRI's framework, say so clearly.`;
+
+const SUGGESTIONS=[
+  "What is the Threshold State?",
+  "How do I practice Attunement?",
+  "What is Anahata Nada?",
+  "Which Raga for Stillness?",
+  "What does Prajnanam Brahma mean?",
+  "How does AWASTHA relate to AI?",
+];
+
+let chatHistory=[];
+
+function buildGuide(){
+  const sugg=document.getElementById('suggestions');
+  SUGGESTIONS.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='sugg-btn';btn.textContent=s;
+    btn.onclick=()=>{document.getElementById('chatInput').value=s;sendMessage();};
+    sugg.appendChild(btn);
+  });
+  const saved=localStorage.getItem('groq_key_cri');
+  if(saved)document.getElementById('groqKey').value=saved;
+}
+
+function saveKey(v){
+  if(v.startsWith('gsk_'))localStorage.setItem('groq_key_cri',v);
+}
+
+function addMsg(role,text){
+  const win=document.getElementById('chatWindow');
+  const div=document.createElement('div');
+  div.className='msg '+role;div.textContent=text;
+  win.appendChild(div);win.scrollTop=win.scrollHeight;
+  return div;
+}
+
+async function sendMessage(){
+  const input=document.getElementById('chatInput');
+  const key=document.getElementById('groqKey').value.trim();
+  const text=input.value.trim();
+  if(!text)return;
+  if(!key||!key.startsWith('gsk_')){
+    addMsg('assistant','Please enter your Groq API key above to use the CRI Guide. Get a free key at console.groq.com → API Keys.');
+    return;
+  }
+  input.value='';
+  addMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  const thinking=addMsg('thinking','Consulting the CRI framework…');
+  document.getElementById('sendBtn').disabled=true;
+
+  try{
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body:JSON.stringify({
+        model:'llama-3.1-8b-instant',
+        messages:[{role:'system',content:CRI_SYSTEM},...chatHistory],
+        max_tokens:600,temperature:0.4,
+      })
+    });
+    const data=await res.json();
+    thinking.remove();
+    if(data.error){
+      addMsg('assistant','Error: '+data.error.message);
+    }else{
+      const reply=data.choices[0].message.content;
+      addMsg('assistant',reply);
+      chatHistory.push({role:'assistant',content:reply});
+      if(chatHistory.length>20)chatHistory=chatHistory.slice(-20);
+    }
+  }catch(e){
+    thinking.remove();
+    addMsg('assistant','Connection error. Check your API key and internet connection.');
+  }
+  document.getElementById('sendBtn').disabled=false;
+}
+
+function handleKey(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}
+}
+
+// ─── TAB SWITCHING ────────────────────────────────────────
+
+let kgBuilt=false;
 function switchTab(n){
   document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
   document.querySelectorAll('.panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+  if(n===3&&!kgBuilt){kgBuilt=true;setTimeout(buildKG,50);}
+  if(n===3&&kgBuilt){resetKGHighlight();}
 }
 
+// ─── INIT ─────────────────────────────────────────────────
 buildStateNav();
 buildFreqGrid();
 buildBijaRow();
+buildGuide();
 </script>
 </body>
 </html>
