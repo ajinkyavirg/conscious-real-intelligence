@@ -4,6 +4,8 @@
 
 🌐 **Live app:** [ajinkyavirg.github.io/conscious-real-intelligence](https://ajinkyavirg.github.io/conscious-real-intelligence/)
 
+🤖 **Claude AI Skills:** [github.com/ajinkyavirg/cri-skills](https://github.com/ajinkyavirg/cri-skills)
+
 ---
 
 ## What is CRI?
