@@ -4,6 +4,9 @@
 
 🌐 **Live app:** [ajinkyavirg.github.io/conscious-real-intelligence](https://ajinkyavirg.github.io/conscious-real-intelligence/)
 
+📄 **Fact Sheet:** [CRI_Fact_Sheet.pdf](CRI_Fact_Sheet.pdf)
+📖 **Practice Guide:** [CRI_Practice_Guide.pdf](CRI_Practice_Guide.pdf)
+
 🤖 **Claude AI Skills:** [github.com/ajinkyavirg/cri-skills](https://github.com/ajinkyavirg/cri-skills)
 
 ---
